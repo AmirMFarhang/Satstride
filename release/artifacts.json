@@ -1,8 +1,29 @@
 {
   "schema_version": 1,
-  "product": "Satstride",
+  "product": "PassBook",
   "network_scope": "regtest and Mutinynet test assets",
   "artifacts": [
+    {
+      "file": "passbook-wallet-0.9.11-arm64.apk",
+      "type": "android-apk",
+      "version": "0.9.11",
+      "version_code": 20,
+      "application_id": "dev.passbook.wallet",
+      "display_name": "PassBook",
+      "architecture": "arm64-v8a",
+      "source_commit": "a26fd35650e34fc43937bc7ff5993d0637036164",
+      "sha256": "409ef3681220b648915efbfba3730fa74168e64ca4bf77545e4e63c599e5c63b",
+      "bytes": 196843583,
+      "delivery": "GitHub Release asset; compiled binaries excluded from the source tree",
+      "download_url": "https://github.com/AmirMFarhang/Satstride/releases/download/v0.9.11/passbook-wallet-0.9.11-arm64.apk",
+      "checksums_url": "https://github.com/AmirMFarhang/Satstride/releases/download/v0.9.11/SHA256SUMS",
+      "build_command": "cd apps/mobile && npm run apk",
+      "build_result": "Signed ARM64 release build completed successfully",
+      "build_configuration": {
+        "assistant_provider_public_key": "a99043cbf7666e4354af432c765fc36023daa89987c92f579e558aa0b009f406",
+        "purpose": "Pins the demo help service; source builds can configure their own provider"
+      }
+    },
     {
       "file": "satstride-wallet-0.9.10-arm64.apk",
       "type": "android-apk",
@@ -13,9 +34,11 @@
       "source_commit": "38164c6870c47872a3d76998d070c10a35fe80ea",
       "sha256": "53532c460ed203fb719d0f51e5b7e6dd67e56f714070a58b35aff9a40382902a",
       "bytes": 196807811,
-      "delivery": "Locally built demonstration APK; compiled binaries excluded from the Git repository",
+      "delivery": "GitHub Release asset; compiled binaries excluded from the source tree",
       "build_command": "cd apps/mobile && npm run apk",
-      "build_result": "Signed ARM64 release build completed successfully"
+      "build_result": "Signed ARM64 release build completed successfully",
+      "download_url": "https://github.com/AmirMFarhang/Satstride/releases/download/v0.9.10/satstride-wallet-0.9.10-arm64.apk",
+      "checksums_url": "https://github.com/AmirMFarhang/Satstride/releases/download/v0.9.10/SHA256SUMS"
     },
     {
       "file": "satstride-wallet-0.9.9-arm64.apk",
@@ -43,21 +66,23 @@
     },
     {
       "file": "media/provider-live-desktop.png",
-      "sha256": "d595ef6ba01e491276f48ffc62bd9392c21b4bbc72ba90729d935098fd3c47fe",
+      "sha256": "f118f7b7ddd9ca64bde8c6771893b8e078399a9b83d0fd83bc0c586ddb59bc48",
       "capture": "Live provider console overview",
       "source_commit": "a2212bdade6fd087f5f31fa499f5e369e6b1289d",
-      "data": "Real operator-signed provider APIs through an isolated console preview; no fixture status data",
+      "data": "Real operator-signed provider API after the completed loan and paid fees",
       "runtime": "Existing provider; recent-feed compatibility mode shown explicitly",
-      "privacy": "Only session/actor/loan identifiers hidden in the browser before capture; statuses and data unchanged"
+      "privacy": "Only session/actor/loan identifiers hidden in the browser before capture; statuses and data unchanged",
+      "state": "One repaid loan, four registered applications, zero open loans; fee and check counts unchanged"
     },
     {
       "file": "media/provider-live-workflow.png",
-      "sha256": "5391df23de4241bcbfc9b994d7e70c898563c22bdca7292bff46fa9adb86a6e3",
+      "sha256": "0ba35a33a1094d79c4e264f209fa7904a975134ae0ab1aeb7cbb46a9bdfe3677",
       "capture": "Live provider workflow observations",
       "source_commit": "a2212bdade6fd087f5f31fa499f5e369e6b1289d",
-      "data": "Real operator-signed provider APIs through an isolated console preview; no fixture status data",
+      "data": "Real operator-signed provider API after the completed loan and paid fees",
       "runtime": "Existing provider; recent-feed compatibility mode shown explicitly",
-      "privacy": "Only session/actor/loan identifiers hidden in the browser before capture; statuses and data unchanged"
+      "privacy": "Only session/actor/loan identifiers hidden in the browser before capture; statuses and data unchanged",
+      "state": "One repaid loan, four registered applications, zero open loans; fee and check counts unchanged"
     },
     {
       "file": "media/provider-live-phone.png",
@@ -67,6 +92,29 @@
       "data": "Real operator-signed provider APIs through an isolated console preview; no fixture status data",
       "runtime": "Existing provider; recent-feed compatibility mode shown explicitly",
       "privacy": "Only session/actor/loan identifiers hidden in the browser before capture; statuses and data unchanged"
+    }
+  ],
+  "team": "Satstride",
+  "pitch_assets": [
+    {
+      "file": "media/rgb-protocol.png",
+      "sha256": "a28d2e1662de81988d4016949b698462fb57ccb41959f5656ea8c4cec6d8cebc",
+      "source": "Selected original pitch asset; standalone logo or isolated chart, no full slide"
+    },
+    {
+      "file": "media/qvac.png",
+      "sha256": "c5f1a8e7d8914af3634ffabb936cddac955848158d2b6baaa2b840165ea03715",
+      "source": "Selected original pitch asset; standalone logo or isolated chart, no full slide"
+    },
+    {
+      "file": "media/tether-wdk.png",
+      "sha256": "7433690906b78c1de17f90097c5dfe69d3b5b58f80af132787ac34d04654db2d",
+      "source": "Selected original pitch asset; standalone logo or isolated chart, no full slide"
+    },
+    {
+      "file": "media/reputation-ltv-ladder.png",
+      "sha256": "63570cfbc8346aee51b15df430aecafeeeaa78e82327221bbfd08c2997cf6c1f",
+      "source": "Selected original pitch asset; standalone logo or isolated chart, no full slide"
     }
   ]
 }

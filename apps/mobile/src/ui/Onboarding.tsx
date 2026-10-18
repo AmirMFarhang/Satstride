@@ -61,7 +61,7 @@ export function Onboarding() {
       </>}>
         <View style={st.welcome}>
           <LogoTile />
-          <Text style={st.name} accessibilityRole="header">Passbook</Text>
+          <Text style={st.name} accessibilityRole="header">PassBook</Text>
           <Text style={[t.sub, st.tagline]}>Borrow dollars against your bitcoin, or lend them. Pay on time, borrow more.</Text>
           <Text style={[t.small, { textAlign: 'center', maxWidth: 300 }]}>Your keys are made on this phone and stay behind its lock.</Text>
         </View>

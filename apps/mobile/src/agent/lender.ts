@@ -79,6 +79,21 @@ export function expectedRunMaterials(modelId: string): RunMaterials {
   return { system_prompt_sha256: pin.system_prompt_sha256, tool_definitions_sha256: pin.tool_definitions_sha256, model_id: modelId, model_file_sha256: null, model_material_kind: 'unavailable' }
 }
 
+const PAYOUT_REQUEST_DOMAIN = 'passbook-validated-payout-request-v1' as const
+
+export interface SavedPayoutRequest {
+  v: 1
+  domain: typeof PAYOUT_REQUEST_DOMAIN
+  loan_id: Hex
+  lender_pk: Hex
+  request: SignRequestPayload
+  sig: Hex
+}
+
+function payoutRequestSealValid(saved: SavedPayoutRequest, loanId: Hex, lenderPk: Hex): boolean {
+  return saved.v === 1 && saved.domain === PAYOUT_REQUEST_DOMAIN && saved.loan_id === loanId && saved.lender_pk === lenderPk && verifyObject(saved, lenderPk)
+}
+
 export interface LenderLoan {
   terms: LoanTerms
   borrower_pk: Hex
@@ -110,6 +125,8 @@ export interface LenderLoan {
   fee_pending?: Hex
   /** the borrower-chosen disbursement invoice, kept to finish a payout that went out */
   disbursement_invoice?: string
+  /** Validated original borrower request, kept before indexing so a restart never needs a second relay event. */
+  disbursement_request?: SavedPayoutRequest
   /** after the payout, each step done once, so a retry resumes the missing ones (platform notice, watch, FUNDED) */
   funded_recorded?: boolean
   repayment_watch_issued?: { invoice: string; recipient_id: string; backup: string; password: string; master_fingerprint: string }
@@ -121,6 +138,15 @@ export interface LenderLoan {
   negotiation_id?: Hex
   /** the credit check billed to this lender for this negotiation, charged with the platform fee at close */
   check_bill?: HeldBill
+}
+
+/** A payout stopped before any send may continue under the person's existing approval. */
+export function canResumeApprovedPayout(l: LenderLoan, loanId: Hex): boolean {
+  const saved = l.disbursement_request
+  const req = saved?.request
+  return !!l.fund_approved && !!l.lock && !!saved && payoutRequestSealValid(saved, loanId, l.terms.lender_pk) &&
+    req?.purpose === 'split' && req.loan_id === loanId && req.terms_hash === loanId &&
+    !l.disbursement_attempted && !l.disbursement_pending && !l.disbursement_txid && !l.release_txid && !l.cancelled
 }
 
 /**
@@ -406,8 +432,12 @@ export class PhoneLender {
   async fund(loanId: Hex, timeoutMs = 600_000): Promise<{ disbursement_txid: Hex; repayment_invoice: string }> {
     const l = this.loan(loanId)
     if (!l.fund_approved) throw new Error('funding needs the person\'s OK on this phone')
-    if (l.disbursement_attempted) throw new Error('disbursement already attempted for this loan; reconcile the wallet before retrying')
-    const { payload: req } = await this.relay.receive<SignRequestPayload>(KIND.SIGN_REQUEST, l.borrower_pk, { timeoutMs, match: (r) => r.loan_id === loanId && r.purpose === 'split' })
+    if (l.disbursement_attempted || l.disbursement_pending || l.disbursement_txid) throw new Error('disbursement already attempted for this loan; reconcile the wallet before retrying')
+    if (this.pubkey !== l.terms.lender_pk) throw new Error('this loan belongs to another lender')
+    const saved = l.disbursement_request
+    if (saved && !payoutRequestSealValid(saved, loanId, this.pubkey)) throw new Error('saved payout request seal does not verify for this lender and loan')
+    const req = saved ? saved.request : (await this.relay.receive<SignRequestPayload>(KIND.SIGN_REQUEST, l.borrower_pk, { timeoutMs, match: (r) => r.loan_id === loanId && r.purpose === 'split' })).payload
+    if (req.loan_id !== loanId || req.purpose !== 'split') throw new Error('saved split request does not name this loan')
     if (l.termsheet) {
       // nothing moves before both people approved this exact sheet: the borrower's countersignature and approval ride on the split request
       const problems = countersignedSheetProblems(l, req, loanId, this.economics, this.state.market?.policy)
@@ -447,9 +477,16 @@ export class PhoneLender {
 
     const decoded = await this.rgbDecode(req.disbursement_invoice)
     if (decoded && decoded.assetId && decoded.assetId !== this.assetId) throw new Error('the disbursement invoice names another asset')
+    if (!saved) {
+      l.disbursement_request = await this.key.signObject({ v: 1 as const, domain: PAYOUT_REQUEST_DOMAIN, loan_id: loanId, lender_pk: this.pubkey, request: req })
+      await this.save()
+    }
     // right before money moves: the collateral is still locked (the escrow output unspent) and the
     // platform has not closed the loan (a refund after the funding window spends that output)
     await this.assertCollateralLive(loanId, { txid: input.txid, vout: input.vout })
+    // Two callers may have validated the same saved request concurrently. The
+    // guard is checked again synchronously before the first irreversible step.
+    if (l.disbursement_attempted || l.disbursement_pending || l.disbursement_txid) throw new Error('disbursement already attempted for this loan; reconcile the wallet before retrying')
     l.disbursement_attempted = true
     l.disbursement_invoice = req.disbursement_invoice
     await this.save()
@@ -479,20 +516,30 @@ export class PhoneLender {
     }
     // The phone and platform may see a confirmation at different times. Do not send
     // principal until the platform has independently accepted this exact lock.
-    const indexed = await this.ensureIndexedLock(loanId, outpoint, record)
+    const indexed = await this.ensureIndexedLock(loanId, outpoint, record, 3)
     if (indexed.status !== 'locked') throw new Error('refusing to pay out: the platform already has this loan as funded')
+    if (!(await this.chain.utxos(escrowFor(partiesOf(l.terms)).script)).some((u) => u.txid === outpoint.txid && u.vout === outpoint.vout)) {
+      throw new Error('refusing to pay out: the collateral is no longer locked (its escrow output was spent)')
+    }
   }
 
   /** Reconcile only an existing lock; this never builds, signs or broadcasts a transaction. */
-  private async ensureIndexedLock(loanId: Hex, lock: { txid: Hex; vout: number }, record?: PhoneLoanRecord): Promise<PhoneLoanRecord> {
+  private async ensureIndexedLock(loanId: Hex, lock: { txid: Hex; vout: number }, record?: PhoneLoanRecord, attempts = 1): Promise<PhoneLoanRecord> {
     let current = record ?? await this.platform.loan(loanId)
-    if (current.status === 'pending') {
+    for (let attempt = 1; current.status === 'pending' && attempt <= attempts; attempt++) {
       let failure: unknown
       try { await this.platform.recordLock(loanId, lock.txid) } catch (e) { failure = e }
       // A write can have succeeded even if its answer was lost, or the borrower
       // may have recorded the same lock concurrently. Trust the resulting record.
       current = await this.platform.loan(loanId)
-      if (failure && current.status === 'pending') throw failure
+      if (failure && current.status === 'pending') {
+        if (attempt < attempts && /(?:\(422\)|422): lock transaction not confirmed$/.test((failure as Error).message)) {
+          await new Promise((resolve) => setTimeout(resolve, 1000))
+          continue
+        }
+        throw failure
+      }
+      break
     }
     if (!['locked', 'open'].includes(current.status) || current.lock_txid !== lock.txid || current.lock_vout !== lock.vout) {
       throw new Error('the platform has not accepted this loan\'s saved collateral lock')

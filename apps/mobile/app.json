@@ -1,9 +1,9 @@
 {
   "expo": {
-    "name": "Passbook Wallet",
+    "name": "PassBook",
     "slug": "passbook-mobile",
-    "version": "0.9.10",
-    "description": "The Passbook wallet on the phone: borrow against your bitcoin, or lend. Regtest build: test coins only, sideloaded, never published.",
+    "version": "0.9.11",
+    "description": "PassBook on the phone: borrow against your bitcoin, or lend. Test networks only: test coins, sideloaded.",
     "scheme": "passbookwallet",
     "orientation": "portrait",
     "userInterfaceStyle": "light",
@@ -12,7 +12,7 @@
     ],
     "android": {
       "package": "dev.passbook.wallet",
-      "versionCode": 19,
+      "versionCode": 20,
       "allowBackup": false,
       "permissions": [
         "android.permission.USE_BIOMETRIC"
@@ -51,7 +51,7 @@
       [
         "expo-local-authentication",
         {
-          "faceIDPermission": "Passbook asks for your phone's lock before it opens the wallet, shows your words or signs."
+          "faceIDPermission": "PassBook asks for your phone's lock before it opens the wallet, shows your words or signs."
         }
       ],
       [

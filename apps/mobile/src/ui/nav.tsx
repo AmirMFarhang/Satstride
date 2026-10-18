@@ -2,7 +2,7 @@
 // phone's back button pops the stack first; leaving the app locks the wallet, so back
 // only leaves from the Passbook tab's first screen.
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
-import { BackHandler } from 'react-native'
+import { BackHandler, View } from 'react-native'
 import type { TabId } from './kit'
 
 export interface Route { name: string; params?: Record<string, unknown> }
@@ -28,7 +28,7 @@ export function useNav(): Nav {
 
 const EMPTY: Record<TabId, Route[]> = { passbook: [], agenda: [], lend: [], market: [], wallet: [] }
 
-export function Navigator({ roots, screens }: { roots: Record<TabId, React.ComponentType>; screens: Record<string, React.ComponentType<{ params: Record<string, unknown> }>> }) {
+export function Navigator({ roots, screens, overlay: Overlay }: { roots: Record<TabId, React.ComponentType>; screens: Record<string, React.ComponentType<{ params: Record<string, unknown> }>>; overlay?: React.ComponentType<{ screen: string }> }) {
   const [tab, setTab] = useState<TabId>('passbook')
   const [stacks, setStacks] = useState<Record<TabId, Route[]>>(EMPTY)
 
@@ -57,7 +57,10 @@ export function Navigator({ roots, screens }: { roots: Record<TabId, React.Compo
   const Top = top ? screens[top.name] : null
   return (
     <NavCtx.Provider value={nav}>
+      <View style={{ flex: 1 }}>
       {Top ? <Top key={`${tab}:${stacks[tab].length}:${top!.name}`} params={top!.params ?? {}} /> : <Root key={tab} />}
+      {Overlay ? <Overlay screen={top?.name ?? tab} /> : null}
+      </View>
     </NavCtx.Provider>
   )
 }

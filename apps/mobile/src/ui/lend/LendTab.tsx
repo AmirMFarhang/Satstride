@@ -15,7 +15,7 @@ import { useStore } from '../../app/store'
 import { useVersion, useWalletView } from '../../app/views'
 import { useRelayOffers } from '../../app/offerbook'
 import { loanPhase, type LoanPhase } from '../../app/lend-flow'
-import { PHONE_OFFER } from '../../agent/lender'
+import { canResumeApprovedPayout, PHONE_OFFER } from '../../agent/lender'
 import { Button, Choices, Disclosure, FlowTop, Hero, IconButton, KV, P, Problem, Row, Rows, Screen, Sheet, StopCount, Steps, TabBar, TabTop, Tag, TxValue, Undo, Working, type StepState } from '../kit'
 import { useNav, useTabSwitch } from '../nav'
 import { C, F, R, t } from '../theme'
@@ -231,6 +231,7 @@ export function LendLoan({ params }: { params: Record<string, unknown> }) {
   const phase = loanPhase(l, due !== undefined)
   const r = lenderReturn({ principal: tm.principal, fee: tm.fee, term_blocks: tm.maturity_height - tm.open_height })
   const passed = l.checks.filter((c) => c.ok).length
+  const resumeApproved = canResumeApprovedPayout(l, id) && !f.working[id]
 
   if (phase === 'cancelled') {
     return (
@@ -273,6 +274,9 @@ export function LendLoan({ params }: { params: Record<string, unknown> }) {
     <Screen top={<FlowTop title={borrower} onBack={nav.pop} right={phase === 'fee-due' ? <StopCount n={3} /> : undefined} />} bottom={phase === 'fee-due' ? <>
       <Button label={`Pay the platform fee, ${usdNum(due!)} ${NETWORK.usdUnit}`} busy={!!f.working[id]} disabled={!!f.feeParts[id]?.problems.length} onPress={() => void s.lend.payFee(id)} />
       <Undo />
+    </> : resumeApproved ? <>
+      <Button label="Resume approved payout" onPress={() => s.lend.follow(id)} />
+      <P small>Your approval still applies. The phone checks that their bitcoin is locked before paying out.</P>
     </> : undefined}>
       <Hero value={`${usdNum(debtOf(tm))} test USDT`} sub={phase === 'closed' || phase === 'repaid' || phase === 'fee-due' ? `repaid by ${borrower}` : `${borrower} repays by block ${tm.maturity_height}`} />
       <Steps items={[

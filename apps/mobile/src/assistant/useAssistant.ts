@@ -7,6 +7,7 @@ import type { Hex } from '../../../../src/core/crypto.js'
 import { askAssistant, discoverAssistant, ephemeralSigner, type AssistAnswer } from '../../../../src/assistant/client.js'
 import { assistContext, type AssistContextInput, type AssistInfo, type AssistSigner, type AssistTransport } from '../../../../src/assistant/protocol.js'
 import { renderableIntent, statusAfterAnswer, statusAfterLookup, type AssistantStatus } from './context'
+import { activeNetwork, testLabelTags } from '../core/network'
 
 export interface AssistantConfig {
   /** the relay connection the app already has (poolTransport over its SimplePool); null when offline */
@@ -49,6 +50,7 @@ export function useAssistant(cfg: AssistantConfig): Assistant {
   const [status, setStatus] = useState<AssistantStatus>('looking')
   const signer = useRef<AssistSigner | null>(null)
   const nextId = useRef(1)
+  const inFlight = useRef(false)
   const cfgRef = useRef(cfg)
   cfgRef.current = cfg
   const pk = cfg.assistantPk ?? pinnedKey()
@@ -67,25 +69,35 @@ export function useAssistant(cfg: AssistantConfig): Assistant {
       setInfo(found)
       // a pinned key is an identity, not proof the provider is up
       setStatus((s) => statusAfterLookup(s, { transport: true, found: !!found, pinned: !!pk }))
-    })
+    }).catch(() => { if (live) setStatus('offline') })
     return () => { live = false }
   }, [visible, hasTransport, pk])
 
   const ask = useCallback(async (question: string) => {
     const q = question.trim()
-    if (!q) return null
-    signer.current ??= ephemeralSigner()
+    if (!q || inFlight.current) return null
+    inFlight.current = true
     const id = nextId.current++
     setTurns((t) => [...t, { id, question: q, answer: null }])
     const c = cfgRef.current
-    const answer = await askAssistant({
-      transport: c.transport,
-      signer: signer.current,
-      assistantPk: pk ?? info?.assistant_pk ?? null,
-      question: q,
-      context: assistContext(c.context()),
-      timeoutMs: c.timeoutMs,
-    })
+    let answer: AssistAnswer
+    const context = assistContext(c.context())
+    try {
+      // A question tapped during the opening lookup must not fall back merely
+      // because INFO has not reached this render yet.
+      let target = pk ?? info?.assistant_pk ?? null
+      if (!target && c.transport) {
+        const found = await discoverAssistant(c.transport, { waitMs: 3000 })
+        if (found) { target = found.assistant_pk; setInfo(found) }
+      }
+      signer.current ??= ephemeralSigner()
+      answer = await askAssistant({
+        transport: c.transport, signer: signer.current, assistantPk: target,
+        question: q, context, timeoutMs: c.timeoutMs, tags: testLabelTags(activeNetwork()),
+      })
+    } catch {
+      answer = { ...await askAssistant({ transport: null, assistantPk: null, question: q, context }), fallback_reason: 'PROVIDER_UNREACHABLE' }
+    } finally { inFlight.current = false }
     const shown = { ...answer, intent: renderableIntent(answer.intent, c.screens) }
     setTurns((t) => t.map((x) => (x.id === id ? { ...x, answer: shown } : x)))
     setStatus((s) => statusAfterAnswer(s, answer))

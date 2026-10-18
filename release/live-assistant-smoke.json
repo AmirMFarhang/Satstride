@@ -1,0 +1,33 @@
+{
+  "schema": "satstride.live-assistant-observer.v1",
+  "observed_at": "2026-10-18T10:33:11.748817+00:00",
+  "observation_kind": "unsigned bounded live inference smoke",
+  "model_backend": "existing local QVAC SDK service through its HTTP bridge",
+  "loaded_model": "qvac-sdk:qwen3-1.7b",
+  "mobile_help_service": {
+    "transport": "encrypted NIP-44 on public Nostr relays",
+    "question": "What does this app do?",
+    "source": "model",
+    "answered_by": "provider",
+    "model": "qwen3-1.7b",
+    "fallback_reason": null,
+    "refused": null,
+    "client_duration_ms": 8535,
+    "provider_duration_ms": 8216,
+    "provider_answer_log_matched": true
+  },
+  "provider_console_copilot": {
+    "transport": "existing authenticated local operator API",
+    "question": "What did we earn?",
+    "source": "model",
+    "model": "qwen3-1.7b",
+    "fallback_reason": null,
+    "refused": null,
+    "duration_ms": 2545
+  },
+  "scope": [
+    "Live QVAC selected grounded help sentences or operator facts; answers are intentionally bounded to verified context.",
+    "These probes caused no wallet, loan, credit-check, billing, transfer or service-restart action.",
+    "This verifies both provider inference paths; the Android navigation entry point is being repaired separately."
+  ]
+}

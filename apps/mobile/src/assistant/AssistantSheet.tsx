@@ -82,7 +82,7 @@ export function AssistantSheet({ assistant, onGo, visible, onClose }: { assistan
   }
   const go = (r: AssistRoute) => { close(); onGo(r) }
   const who = assistant.status === 'looking' ? 'Looking for the provider…'
-    : assistant.status === 'online' ? (assistant.info?.label.startsWith('model') ? `Answers from the provider's ${assistant.info.label.replace(/^model \(|\)$/g, '')}` : 'Answers from the provider')
+    : assistant.status === 'online' ? (assistant.info?.label.startsWith('model') ? `Provider advertises ${assistant.info.label}. Each reply shows whether its model answered.` : 'Provider found. Each reply shows who answered.')
     : assistant.status === 'unconfirmed' ? "The provider's help agent hasn't announced itself: questions go to it, and this phone answers if it doesn't reply"
     : 'Provider offline: answers come from this phone\'s help text'
 
@@ -109,7 +109,7 @@ export function AssistantSheet({ assistant, onGo, visible, onClose }: { assistan
               ) : assistant.turns.map((turn) => (
                 <View key={turn.id} style={st.turn}>
                   <View style={st.question}><Text style={[t.body, { color: C.ink }]}>{turn.question}</Text></View>
-                  {turn.answer ? <AnswerCard a={turn.answer} onGo={go} /> : <Working label={assistant.status === 'offline' ? 'Answering on this phone' : "Asking the provider's help agent"} />}
+                  {turn.answer ? <AnswerCard a={turn.answer} onGo={go} /> : <Working label={assistant.status === 'offline' ? 'Answering on this phone' : 'Waiting for the provider’s signed reply (up to 30 seconds)'} />}
                 </View>
               ))}
             </ScrollView>

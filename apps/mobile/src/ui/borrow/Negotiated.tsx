@@ -14,6 +14,7 @@ import { Button, Disclosure, FlowTop, Hero, KV, Note, P, Problem, Row, Rows, Scr
 import { PersonaLine } from './PersonaLine'
 import { NegotiationVisualizer } from '../../motion/NegotiationVisualizer'
 import { CheckVisualizer } from '../../motion/CheckVisualizer'
+import { useReadableNegotiation } from '../../motion/useReadableNegotiation'
 import type { CheckPhase } from '../../motion/check-model'
 import { useNav } from '../nav'
 import { Icon } from '../icons'
@@ -99,20 +100,26 @@ export function NegotiatedStage({ f }: { f: BorrowState }) {
   const policy = s.borrowerState.policy
   const leave = () => { s.borrow.reset(); nav.root() }
   const back = () => nav.root()
+  const messages = f.transcript ?? f.deal?.messages ?? []
+  const negotiationId = messages[0]?.negotiation_id ?? offer.id
+  const paced = useReadableNegotiation(negotiationId, messages.length)
+  const [reviewed, setReviewed] = useState<string | null>(null)
+  const reviewDeal = f.stage === 'check-node' && reviewed !== negotiationId
 
-  if (f.stage === 'negotiating' || f.stage === 'no-deal' || f.stage === 'negotiation-failed') {
+  if (f.stage === 'negotiating' || f.stage === 'no-deal' || f.stage === 'negotiation-failed' || reviewDeal) {
     const done = f.stage !== 'negotiating'
     return (
-      <Screen top={<FlowTop title="Negotiating" onBack={back} />} bottom={done ? <>
+      <Screen top={<FlowTop title={reviewDeal ? 'Negotiation agreed' : 'Negotiating'} onBack={back} />} bottom={reviewDeal ? <Button label="Continue to the credit check" disabled={!paced.ready} onPress={() => setReviewed(negotiationId)} /> : done ? <>
         <Button label="Choose another lender" onPress={() => { s.borrow.reset(); nav.pop() }} />
         <Button kind="ghost" label="Back to your passbook" onPress={leave} />
       </> : <Undo text="Your agent stays inside the rules you signed" />}>
         <Text style={t.sub}>{lender} · {usdNum(f.principal ?? 0).replace(/\.00$/, '')} test USDT{policy ? ` · at most ${pctText(policy.max_apr_bps)}` : ''}</Text>
+        {reviewDeal ? <Note tone="green" icon="check" title="Agreement received" sub="Read the actual signed messages below. Nothing is shared with a check node until you continue and approve its consent." /> : null}
         {f.stage === 'no-deal' ? (() => { const w = noDealWords(f.noDeal ?? 'NO_DEAL', lender); return <Note tone="warn" icon="close" title={w.title} sub={`${w.sub} Nothing was shared or signed beyond the negotiation.`} /> })() : null}
         {f.stage === 'negotiation-failed' ? <Note tone="warn" icon="close" title="The negotiation did not start" sub={`${stoppedWords(f.stopped, lender)} Nothing was shared.`} /> : null}
         {f.stage === 'no-deal' && f.noDeal ? <Rows><Row k="Code" v={f.noDeal} mono /></Rows> : null}
-        <NegotiationVisualizer messages={f.transcript ?? []} borrowerPk={me} lenderLabel={lender} noDeal={f.stage === 'no-deal' && f.noDeal ? noDealWords(f.noDeal, lender) : undefined} />
-        <Working label={f.working} />
+        <NegotiationVisualizer messages={messages.slice(0, paced.shown)} borrowerPk={me} lenderLabel={lender} noDeal={f.stage === 'no-deal' && f.noDeal ? noDealWords(f.noDeal, lender) : undefined} />
+        <Working label={reviewDeal ? (paced.ready ? null : 'Showing the signed messages, one at a time') : f.working} />
         <Problem>{f.stage === 'negotiation-failed' ? f.error : null}</Problem>
       </Screen>
     )

@@ -3,7 +3,7 @@
 // internet, and the platform where the provider says (its link or QR, opened by the phone's own
 // camera app, lands here to be confirmed). With the platform's key from that link the phone talks
 // to the platform over Nostr and the address is only the fallback. The worklet is set up when the
-// app starts, so a change takes effect the next time Passbook opens. Mainnet does not exist here.
+// app starts, so a change takes effect the next time PassBook opens. Mainnet does not exist here.
 import React, { useState } from 'react'
 import { Text, View } from 'react-native'
 import { NETWORK_NAMES, overrideProblems, parseProviderLink, type NetworkName } from '../../core/network'
@@ -45,13 +45,13 @@ export function NetworkSettings() {
     pendingProviderLink.clear()
     setProblem(null)
     const same = name === NETWORK.name && (overrides.platform ?? NETWORK.platform) === NETWORK.platform && (overrides.platformPk ?? null) === NETWORK.platformPk
-    setNote(same ? 'Saved.' : 'Saved. To switch, close Passbook completely (swipe it away from your recent apps), then open it again.')
+    setNote(same ? 'Saved.' : 'Saved. To switch, close PassBook completely (swipe it away from your recent apps), then open it again.')
   }
 
   return (
     <Screen top={<FlowTop title="Network" onBack={nav.pop} />} bottom={<>
       <Button label="Save" onPress={save} />
-      <Undo text="Test networks only; the change takes effect when Passbook opens again" />
+      <Undo text="Test networks only; the change takes effect when PassBook opens again" />
     </>}>
       <Rows topLine>
         <Row k="Now" v={NETWORK.badge} />

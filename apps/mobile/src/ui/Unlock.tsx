@@ -16,7 +16,7 @@ export function Unlock() {
   const [busy, setBusy] = useState(false)
   const open = async () => {
     setProblem(null)
-    const lock = await requirePhoneLock('Open your Passbook wallet')
+    const lock = await requirePhoneLock('Open your PassBook wallet')
     if (!lock.ok) return setProblem(lock.reason)
     setBusy(true)
     try { await wm.unlock(activeWallet.get(WALLET_ID)) } catch (e) { setProblem(`Could not open the wallet: ${(e as Error).message}`) } finally { setBusy(false) }

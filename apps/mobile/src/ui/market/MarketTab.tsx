@@ -142,7 +142,7 @@ export function MarketTab() {
         <P>Independent lenders post offers. Borrowers can post requests. Anyone can read both.</P>
         <P>Your step on the ladder decides which offers fit you. Each loan you repay unlocks more.</P>
         <P>You can lend too: the Lend tab posts your own offer from this wallet.</P>
-        <P>Passbook never lends and never holds your bitcoin alone.</P>
+        <P>PassBook never lends and never holds your bitcoin alone.</P>
       </Sheet>
     </Screen>
   )

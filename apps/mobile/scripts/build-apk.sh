@@ -26,6 +26,7 @@ mkdir -p dist
 version=$(node -p "require('./app.json').expo.version")
 out="dist/passbook-wallet-$version.apk"
 cp android/app/build/outputs/apk/release/app-release.apk "$out"
+cp "$out" "dist/passbook-wallet-$version-arm64.apk"
 cp "$out" "dist/satstride-wallet-$version-arm64.apk"
 apksigner=$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)/apksigner
 "$apksigner" verify --print-certs "$out" | grep -E 'certificate (DN|SHA-256 digest):'

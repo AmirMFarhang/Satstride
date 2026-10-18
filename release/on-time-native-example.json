@@ -1,0 +1,139 @@
+{
+  "schema": "satstride.local-native-loan-example.v1",
+  "observation_kind": "unsigned read-only verification of retained test artifacts",
+  "network": "regtest",
+  "example_type": "real local native RGB SDK loan lifecycle test",
+  "physical_phones": false,
+  "funds": "locally seeded test asset and regtest bitcoin",
+  "test": {
+    "result": "PASS",
+    "cases_passed": 1,
+    "duration_seconds": 65.505889734,
+    "source_commit": "a679e4722618cfedb80c0df685c105266b8de4b0",
+    "mobile_runtime_commit": "44684ffa4c302ad40f4f5df0c6a1e91fbd7d8b69",
+    "completed_at": "2026-10-18T12:20:22+0200",
+    "scorer": "in-process deterministic rules; no live Compex/model execution",
+    "approval_scope": "automated test approval; no physical biometric approval"
+  },
+  "loan": {
+    "id": "5619033cb750a965aa0fccf1ecd037b6c06fd5e0a2ac18e8c803af050149c6a6",
+    "status": "repaid",
+    "asset_id": "rgb:gyb2CgVc-_VpaY~e-dA52cum-z~orGgn-ubH48fr-rhIf6oE",
+    "asset_precision": 6,
+    "principal_micro": 100000000,
+    "interest_micro": 950000,
+    "repayment_micro": 100950000,
+    "collateral_sats": 201900,
+    "open_height": 418,
+    "maturity_height": 448,
+    "grace_blocks": 5
+  },
+  "chain_records": {
+    "collateral_lock": {
+      "txid": "6fad498f8ed240b8d820e1d1559068e7721e2329a0ae4a236002fe5350ba692b",
+      "vout": 0,
+      "confirmed_height": 419
+    },
+    "principal_disbursement": {
+      "txid": "f195bb8d82b1096f2be1bf5447ac33a135d2c42f9d612b1eeba12b0f4a35c9dc",
+      "confirmed_height": 420
+    },
+    "repayment": {
+      "txid": "8a58705bd6dcf8a88ab7c19b9d9fbaf67d6cff159ff3c849ea173449e7f87c59",
+      "confirmed_height": 423
+    },
+    "collateral_release": {
+      "txid": "e03336de0cf2a249d24bee94374eae9e923f5d03bf6079f56f3ccd959e3947b9",
+      "confirmed_height": 427,
+      "path": "cooperative leaf A"
+    },
+    "platform_fee": {
+      "txid": "4514578f29eab9dddd60f6c730cf251bc68a2a74b9cf195f2c013629c5826242",
+      "confirmed_height": 428,
+      "amount_micro": 140000,
+      "status": "fee_paid"
+    }
+  },
+  "timing": {
+    "classification": "on_time",
+    "rule": "repayment confirmed height <= maturity height",
+    "repayment_height": 423,
+    "maturity_height": 448,
+    "blocks_before_maturity": 25,
+    "platform_fee_outcome": "repaid_on_time"
+  },
+  "native_settlement_records": [
+    {
+      "role": "borrower",
+      "txid": "f195bb8d82b1096f2be1bf5447ac33a135d2c42f9d612b1eeba12b0f4a35c9dc",
+      "direction": "receive",
+      "status": "Settled",
+      "native_status_code": 3,
+      "amount_micro": 100000000
+    },
+    {
+      "role": "borrower",
+      "txid": "8a58705bd6dcf8a88ab7c19b9d9fbaf67d6cff159ff3c849ea173449e7f87c59",
+      "direction": "send",
+      "status": "Settled",
+      "native_status_code": 3,
+      "amount_micro": 100950000
+    },
+    {
+      "role": "lender",
+      "txid": "f195bb8d82b1096f2be1bf5447ac33a135d2c42f9d612b1eeba12b0f4a35c9dc",
+      "direction": "send",
+      "status": "Settled",
+      "native_status_code": 3,
+      "amount_micro": 100000000
+    },
+    {
+      "role": "lender",
+      "txid": "4514578f29eab9dddd60f6c730cf251bc68a2a74b9cf195f2c013629c5826242",
+      "direction": "send",
+      "status": "Settled",
+      "native_status_code": 3,
+      "amount_micro": 140000
+    },
+    {
+      "role": "dedicated_repayment_account",
+      "txid": "8a58705bd6dcf8a88ab7c19b9d9fbaf67d6cff159ff3c849ea173449e7f87c59",
+      "direction": "receive",
+      "status": "Settled",
+      "native_status_code": 3,
+      "amount_micro": 100950000
+    },
+    {
+      "role": "platform_fee_receiver",
+      "txid": "4514578f29eab9dddd60f6c730cf251bc68a2a74b9cf195f2c013629c5826242",
+      "direction": "receive",
+      "status": "Settled",
+      "native_status_code": 3,
+      "amount_micro": 140000
+    }
+  ],
+  "proof_scope": {
+    "evidence_sources": [
+      "retained platform SQLite loan and fee records",
+      "retained native rgb-lib SQLite transfer records for both transfer sides",
+      "successful native SDK/worklet lifecycle test assertions and log",
+      "source-reviewed chain-height recording and on-time classification rules"
+    ],
+    "repayment_platform_proof": "lender_ack",
+    "checks": [
+      "native borrower receipt and lender send match principal txid, asset and amount",
+      "native borrower send and dedicated lender repayment account receipt match repayment txid, asset and amount",
+      "native lender send and platform fee receiver match fee txid, asset and amount",
+      "dedicated repayment account settled balance asserted equal to debt by test",
+      "PB-IOU received and verified by test",
+      "cooperative release confirmation and matching borrower report asserted by test",
+      "platform fee paid and no fee due asserted by test"
+    ],
+    "limits": [
+      "regtest transaction identifiers have no public block explorer",
+      "chain confirmations are retained chain-backed platform records; no service was restarted for this read-only extraction",
+      "native consignments were validated during the passing SDK test; this extraction does not rerun consignment validation",
+      "this run is a local Node SDK/worklet test, not an Android hardware or live Compex acceptance test"
+    ]
+  }
+}

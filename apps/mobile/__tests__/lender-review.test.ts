@@ -137,8 +137,9 @@ test('an already open exact payout needs no indexing writes; conflicting locks, 
 
 test('before a first payout the platform must accept the independently verified unspent lock', async () => {
   const state: PhoneLenderState = { loans: { [ID]: { terms, borrower_pk: B.pubkey, accepted_at: 1, checks: [], memo: '' } }, declined: [] }
-  const { a, calls } = lender(state, { record: { status: 'pending' }, lockFails: 1, chain: { utxos: async () => [{ txid: LOCK, vout: 0, value: terms.collateral_sats, height: 290 }] } })
+  const { a, calls } = lender(state, { record: { status: 'pending' }, lockFails: 3, chain: { utxos: async () => [{ txid: LOCK, vout: 0, value: terms.collateral_sats, height: 290 }] } })
   await assert.rejects(a.assertCollateralLive(ID, { txid: LOCK, vout: 0 }), /lock transaction not confirmed/)
+  assert.equal(calls.recordLock, 3, 'only explicit index confirmation lag gets bounded metadata retries')
   assert.equal(calls.principalSend, undefined)
 })
 

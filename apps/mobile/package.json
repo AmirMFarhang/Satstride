@@ -1,8 +1,8 @@
 {
   "name": "passbook-mobile",
-  "version": "0.9.10",
+  "version": "0.9.11",
   "private": true,
-  "description": "Satstride on the phone: the borrower's wallet, keys and agent live on the device (WDK in a Bare worklet). Test coins only; sideloaded, never published.",
+  "description": "PassBook on the phone: the borrower's wallet, keys and agent live on the device (WDK in a Bare worklet). Test coins only; sideloaded.",
   "main": "index.ts",
   "scripts": {
     "setup": "bash scripts/fetch-native.sh && npm run laptop-native && wdk-worklet-bundler generate",
@@ -72,6 +72,5 @@
   },
   "overrides": {
     "expo-crypto": "55.0.19"
-  },
-  "license": "Apache-2.0"
+  }
 }

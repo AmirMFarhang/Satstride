@@ -1,4 +1,4 @@
-// The Passbook mark (mark.ts, the user's pick: the sealed passbook) and its lockup with the
+// The PassBook mark (mark.ts, the user's pick: the sealed passbook) and its lockup with the
 // wordmark. Knockouts are painted in the palette's paper colour, so draw it on that colour:
 // white screens use 'colour' or 'mono', the green splash 'onGreen', ink surfaces 'reverse'.
 import React from 'react'
@@ -40,7 +40,7 @@ export function MarkLayer({ l, p }: { l: Layer; p: Palette }) {
 }
 
 /** The canvas's welcome tile (canvas 1): an 84 px ink square, radius 26, with the mark in white. */
-export function LogoTile({ size = 84, label = 'Passbook' }: { size?: number; label?: string }) {
+export function LogoTile({ size = 84, label = 'PassBook' }: { size?: number; label?: string }) {
   return (
     <View accessible accessibilityRole="image" accessibilityLabel={label} style={{ width: size, height: size, borderRadius: Math.round(size * 0.31), backgroundColor: C.ink, alignItems: 'center', justifyContent: 'center' }}>
       <Logo size={Math.round(size * 0.62)} variant="reverse" />
@@ -48,13 +48,13 @@ export function LogoTile({ size = 84, label = 'Passbook' }: { size?: number; lab
   )
 }
 
-/** The mark and "Passbook" in IBM Plex Sans: the onboarding header and the about sheet. */
+/** The mark and "PassBook" in IBM Plex Sans: the onboarding header and the about sheet. */
 export function LogoLockup({ size = 40, variant = 'colour', color }: { size?: number; variant?: Variant; color?: string }) {
   const p = PALETTES[variant]
   return (
-    <View style={s.row} accessible accessibilityRole="header" accessibilityLabel="Passbook">
+    <View style={s.row} accessible accessibilityRole="header" accessibilityLabel="PassBook">
       <Logo size={size} variant={variant} />
-      <Text style={[s.word, { fontSize: Math.round(size * 0.68), color: color ?? p.ink }]}>Passbook</Text>
+      <Text style={[s.word, { fontSize: Math.round(size * 0.68), color: color ?? p.ink }]}>PassBook</Text>
     </View>
   )
 }

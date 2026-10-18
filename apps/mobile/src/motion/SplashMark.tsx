@@ -1,6 +1,6 @@
 // The opening: the passbook appears while the wallet engine starts, and the seal stamps it
 // (the check drawing itself) only when the app is really ready: `ready` is the engine's
-// own signal (the session is up), never a timer. Then "Passbook" settles under it and
+// own signal (the session is up), never a timer. Then "PassBook" settles under it and
 // onDone fires. Drawn on the splash's green so it continues the native splash image; the
 // REGTEST badge stays on top as on every screen. With reduce motion the stamped mark shows
 // as soon as the app is ready.
@@ -81,7 +81,7 @@ export function SplashMark({ ready, onDone, size = 132, variant = 'onGreen', wai
   const disc = check && check.el === 'path' && check.stroke ? sealLayers.slice(0, -1) : sealLayers
   const CHECK_LEN = 20
   return (
-    <View style={s.wrap} accessible accessibilityRole="image" accessibilityLabel={ready ? 'Passbook' : `Passbook. ${waiting ?? 'Starting'}`}>
+    <View style={s.wrap} accessible accessibilityRole="image" accessibilityLabel={ready ? 'PassBook' : `PassBook. ${waiting ?? 'Starting'}`}>
       <Animated.View style={{ width: size, height: size, opacity: Animated.multiply(appear, breathe.interpolate({ inputRange: [0, 1], outputRange: [1, 0.72] })), transform: [{ scale: appear.interpolate({ inputRange: [0, 1], outputRange: [0.86, 1] }) }] }}>
         <Svg width={size} height={size} viewBox="0 0 64 64" style={StyleSheet.absoluteFill}>
           {booklet.map((l, i) => <MarkLayer key={i} l={l} p={p} />)}
@@ -96,7 +96,7 @@ export function SplashMark({ ready, onDone, size = 132, variant = 'onGreen', wai
           </Svg>
         </Animated.View>
       </Animated.View>
-      <Animated.Text style={[s.word, { color: p.ink, opacity: word, transform: [{ translateY: word.interpolate({ inputRange: [0, 1], outputRange: [8, 0] }) }] }]}>Passbook</Animated.Text>
+      <Animated.Text style={[s.word, { color: p.ink, opacity: word, transform: [{ translateY: word.interpolate({ inputRange: [0, 1], outputRange: [8, 0] }) }] }]}>PassBook</Animated.Text>
       {!ready && waiting ? <Text style={[s.waiting, { color: p.ink }]}>{waiting}</Text> : null}
     </View>
   )

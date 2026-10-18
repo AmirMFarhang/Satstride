@@ -3,12 +3,13 @@
 import React, { useState } from 'react'
 import { View } from 'react-native'
 import { useBtcAccount } from '../wallet/btc'
-import { AppProvider, useAppStatus } from '../app/session'
+import { AppProvider, useApp, useAppStatus } from '../app/session'
 import { NetworkBadge, P, Problem } from './kit'
 import { C } from './theme'
 import { SplashMark } from '../motion/SplashMark'
 import { AgendaTab } from './AgendaTab'
-import { Navigator } from './nav'
+import { Navigator, useNav } from './nav'
+import { AskButton, AssistantSheet, contextInput, useAssistant } from '../assistant'
 import { PassbookTab } from './borrow/PassbookTab'
 import { BorrowAmount } from './borrow/BorrowAmount'
 import { Offers } from './borrow/Offers'
@@ -75,5 +76,17 @@ function Shell() {
       </View>
     )
   }
-  return <Navigator roots={{ passbook: PassbookTab, agenda: AgendaTab, lend: LendTab, market: MarketTab, wallet: WalletTab }} screens={SCREENS} />
+  return <Navigator roots={{ passbook: PassbookTab, agenda: AgendaTab, lend: LendTab, market: MarketTab, wallet: WalletTab }} screens={SCREENS} overlay={HelpOverlay} />
+}
+
+function HelpOverlay({ screen }: { screen: string }) {
+  const session = useApp()
+  const nav = useNav()
+  const assistant = useAssistant({ transport: session.relay.transport(), screens: Object.keys(SCREENS),
+    context: () => contextInput({ tab: nav.tab, screen, testPersona: !!session.borrowerState.persona }),
+  })
+  return <>
+    <AskButton onPress={assistant.open} busy={assistant.busy} bottom={170} />
+    <AssistantSheet assistant={assistant} onGo={(r) => nav.go(r.tab, r.name, r.params)} />
+  </>
 }
