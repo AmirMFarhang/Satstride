@@ -1,0 +1,10 @@
+# The sandbox needs only these build inputs. Keep wallets, run evidence,
+# node_modules, Git history and local worktrees out of the Docker context.
+*
+!package.json
+!package-lock.json
+!tsconfig.json
+!src/
+!src/**
+!contracts/
+!contracts/**

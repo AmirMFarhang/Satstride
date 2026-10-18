@@ -1,0 +1,49 @@
+# Passbook on Mutinynet (a public signet with 30-second blocks), through
+# KaleidoSwap's Esplora and RGB proxy. Test coins only: everything is labelled
+# "mutinynet" and the dollar asset is "test USDT (mutinynet)", never USDT.
+# Used by infra/mutinynet-run.ts and the wallet panel:
+#   PASSBOOK_CONFIG=infra/passbook.config.mutinynet.yaml npm run server
+# Start-up refuses if any endpoint serves another chain (src/core/network.ts).
+
+network: mutinynet
+endpoints:
+  # verified 17 Oct 2026: same tip as https://mutinynet.com/api
+  esplora: https://esplora.signet.kaleidoswap.com
+  rgb_indexer: https://esplora.signet.kaleidoswap.com
+  rgb_proxy: rpcs://proxy.kaleidoswap.com/json-rpc
+  # no order-book relay for the public run; the loan is arranged directly
+  nostr: []
+
+scorer:
+  provider: in-process
+  fallback: none
+  min_trust_for_lenders: dev-inprocess
+  approved_builds: scorer-releases.json
+
+settlement:
+  default: cosign-rgb
+  enabled: [cosign-rgb]
+
+negotiation:
+  enabled: true
+  max_rounds: 3
+
+compliance:
+  identity: none
+  sanctions: none
+  consent_receipts: required
+  approvals: { maker_checker_above_usdt: 5000 }
+  data_retention_days: 0
+
+asset:
+  id_from: ../data/mutinynet/state.json
+
+economics:
+  platform_share_bps: 1500
+  max_apr_bps: 1900
+  max_ltv_bps_by_term: { 30: 6500, 60: 6000, 90: 5500 }
+  day_count: 'ACT/365'
+  # Mutinynet mines a block about every 30 s; the demo's 1 block = 1 day stays,
+  # so a 30-day loan matures in about 15 minutes. Labelled as such in the run.
+  blocks_per_day: 1
+  fee_grace_blocks: 6

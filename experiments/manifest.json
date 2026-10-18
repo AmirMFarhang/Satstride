@@ -1,0 +1,536 @@
+{
+  "schema_version": 1,
+  "purpose": "Original protocol research source for review",
+  "default_status": "Research snapshot; excluded from normal build; not the active demo rail",
+  "activation": "No imports, scripts or root configuration activate these source packages",
+  "lanes": [
+    {
+      "lane": "native-rgb-hashlock",
+      "source_commit": "b9678a91432735034d2280e103acb9ea9ce9e922",
+      "purpose": "Superseded independent hashlock protocol research, retained separately from the selected joint design",
+      "status": "Research snapshot; excluded from normal build; not the active demo rail",
+      "files": [
+        {
+          "path": "native/rgb-core/.gitignore",
+          "sha256": "c624d0455b4ccac9f5990e7075e316f809f36a4cfca5d2a1c5f9f95ef7e8ddec"
+        },
+        {
+          "path": "native/rgb-core/Cargo.lock",
+          "sha256": "78f7aad4fcbe2f420403465c6845ed87d07f044a66b3f649016f827327cd8525"
+        },
+        {
+          "path": "native/rgb-core/Cargo.toml",
+          "sha256": "dae17b141e3f5953eb55ddaae51ba9bb3b3ff64f1422813a9e3c988a7beec1d3"
+        },
+        {
+          "path": "native/rgb-core/Dockerfile",
+          "sha256": "2bbd99919f0b7b8e01c58d363810f64703a113525cd47f81035b1beb62d9f135"
+        },
+        {
+          "path": "native/rgb-core/scripts/cargo.sh",
+          "sha256": "e132e8e910cf47ba7c96cd635b9454d5d06dd51cbc85ab96d540b4ee55ad45f6"
+        },
+        {
+          "path": "native/rgb-core/scripts/stack.sh",
+          "sha256": "b98aa9a7d3c2e2283a240a189744f9a91ccf4d4c260958f77845ef84c051ab14"
+        },
+        {
+          "path": "native/rgb-core/src/main.rs",
+          "sha256": "8822d9304f57f2f1c3d4acf0491412aff631b79400e19b33b74e0c98c2b9aa30"
+        }
+      ]
+    },
+    {
+      "lane": "native-rgb-joint",
+      "source_commit": "4271ee4d3477ede9227517e7971176548471ede5",
+      "purpose": "Direct joint RGB funding and repayment protocol probe",
+      "status": "Research snapshot; excluded from normal build; not the active demo rail",
+      "files": [
+        {
+          "path": "native/rgb-core/.gitignore",
+          "sha256": "306fd52e74fca6746e12acc750f232de15e71da917756a1270d74c91f5eb7368"
+        },
+        {
+          "path": "native/rgb-core/Cargo.lock",
+          "sha256": "b11a4de4fe786f6919c4ccc896628ca429b3f5b6111a7d6e6b6502f04d2d46d1"
+        },
+        {
+          "path": "native/rgb-core/Cargo.toml",
+          "sha256": "3de719194a227f1a9ff1f2846ffc80d34939e8c051ee6ab171576676adfb277b"
+        },
+        {
+          "path": "native/rgb-core/Dockerfile",
+          "sha256": "2bbd99919f0b7b8e01c58d363810f64703a113525cd47f81035b1beb62d9f135"
+        },
+        {
+          "path": "native/rgb-core/scripts/cargo.sh",
+          "sha256": "049f14dd0a95f94ce2d3bac5616a4c48a5055500c35a04fbdd8617bb4dd6a0dd"
+        },
+        {
+          "path": "native/rgb-core/scripts/stack.sh",
+          "sha256": "a39403e04148cc8eb701ef584b724aab5c2833265be295a7d94bd934ca47b8b4"
+        },
+        {
+          "path": "native/rgb-core/src/main.rs",
+          "sha256": "96304c97637f4e940d75e5eaa4141732428a2c97386f92d26790aa20d36030c3"
+        }
+      ]
+    },
+    {
+      "lane": "onchain-contract",
+      "source_commit": "2d9ef8006489ef45f6a85992599bd2a631e86413",
+      "purpose": "Versioned joint settlement contract and competing-spend analysis source",
+      "status": "Research snapshot; excluded from normal build; not the active demo rail",
+      "files": [
+        {
+          "path": ".github/workflows/ci.yml",
+          "sha256": "4d8e3c5aac47865e150dbbad2a51419e0512a8c5072e4a815aa123c1d5057332"
+        },
+        {
+          "path": "src/settlement/onchain-collateral-template.ts",
+          "sha256": "08040a06bc25cbbea30e5120994709a9e039a9dc25257e28583a2210299cf56b"
+        },
+        {
+          "path": "src/settlement/onchain-collateral-vector.json",
+          "sha256": "6f61d6ef75fa93420ac88db4c736dce90fa83f2c7c8c2f501660db5cb5c42864"
+        },
+        {
+          "path": "src/settlement/onchain-g0-regtest.test.ts",
+          "sha256": "2ed17324515567e46d3b27a333eb963857a7c980a69e10ac6c0be3765d35477b"
+        },
+        {
+          "path": "src/settlement/onchain-g0.test.ts",
+          "sha256": "052d70023ea5528678ab63e804336df385ad2eb6749c4bef17984c4bd7029c10"
+        },
+        {
+          "path": "src/settlement/onchain-interleavings.ts",
+          "sha256": "62906dd6f8502bc4ca94994a5224112e7af180b095987b6db270889a5094fc4d"
+        },
+        {
+          "path": "src/settlement/onchain-v3-contract.ts",
+          "sha256": "476a03eafb937bc3c5132f8302e38479f580b804993bee6db8de718242c3a8af"
+        }
+      ]
+    },
+    {
+      "lane": "native-rgb-assets",
+      "source_commit": "c0991679f518116f439ba019f8fab6b129c009dd",
+      "purpose": "Native receipt media and voucher redemption protocol probe",
+      "status": "Research snapshot; excluded from normal build; not the active demo rail",
+      "files": [
+        {
+          "path": "native/rgb-core/asset-spike/.gitignore",
+          "sha256": "306fd52e74fca6746e12acc750f232de15e71da917756a1270d74c91f5eb7368"
+        },
+        {
+          "path": "native/rgb-core/asset-spike/Cargo.lock",
+          "sha256": "f499b0e7d8d97af671dfc4fca37db21efc08d5f1fbbd478a039e37cbfbf866f9"
+        },
+        {
+          "path": "native/rgb-core/asset-spike/Cargo.toml",
+          "sha256": "24232e28b7f7689dcdb242530f3a48c74ce06b22f18f989037b91609b653ebd2"
+        },
+        {
+          "path": "native/rgb-core/asset-spike/Dockerfile",
+          "sha256": "4222b66a250373011dabb184ac0484df207aaba70bc6db3cfa56a26ca6b19e0d"
+        },
+        {
+          "path": "native/rgb-core/asset-spike/fixtures/receipt.json",
+          "sha256": "c55bd443b332e51d72ba3df498076c52d7c34d68bfeaf40e190f126a6598926b"
+        },
+        {
+          "path": "native/rgb-core/asset-spike/scripts/cargo.sh",
+          "sha256": "866bb8630aa38f6e3ca210b113e8e265479208625978569d4bf6c2d87166fa17"
+        },
+        {
+          "path": "native/rgb-core/asset-spike/scripts/stack.sh",
+          "sha256": "75d848ecee81c8df7913c084c8a6d90643642a6c48fecd3c767b18aa8fa622f1"
+        },
+        {
+          "path": "native/rgb-core/asset-spike/src/main.rs",
+          "sha256": "9bbcdc2e7336e0a4c9288d2520da26bf1633ebbd38cc2dd49fe541d239e8170c"
+        }
+      ]
+    },
+    {
+      "lane": "onchain-check",
+      "source_commit": "89558c9ca88235b18302a8b6132dc8b8dcd82931",
+      "purpose": "Bounded on-chain payment protocol for credit-check reports",
+      "status": "Research snapshot; excluded from normal build; not the active demo rail",
+      "files": [
+        {
+          "path": ".github/workflows/ci.yml",
+          "sha256": "5595b5d5a0366d86d74edaa71b34560afb8c613d15f0e3142c4361d04fbed2af"
+        },
+        {
+          "path": "src/settlement/onchain-check-contract.test.ts",
+          "sha256": "4cf413ee53a7136bcce885cb11e104ad923bc805d86df4555b4f2cb8a0070f1e"
+        },
+        {
+          "path": "src/settlement/onchain-check-contract.ts",
+          "sha256": "91a98065b93cfd110c7f51b28ffcd92e41c85a3901fd2eba87de63145d89253f"
+        },
+        {
+          "path": "src/settlement/onchain-check-interleavings.test.ts",
+          "sha256": "0e6712df49bed8cc422a3e027b4c418b8c98d3037c2992c116e709769bd3c636"
+        },
+        {
+          "path": "src/settlement/onchain-check-interleavings.ts",
+          "sha256": "2209d541b0fbf33aff398891b528e6f5c043eb7deb3f03c39bd2e2ce63a2d486"
+        },
+        {
+          "path": "src/settlement/onchain-check-regtest.test.ts",
+          "sha256": "ac0c73058ab51a966807bc047dfeffa70e5bc492aff0ac8a023cca93a0418f06"
+        },
+        {
+          "path": "src/settlement/onchain-check-template.ts",
+          "sha256": "a25c44df162d70c564599ba70ddf46bf62e2622fd063f5d117ec43c767b1c74d"
+        },
+        {
+          "path": "src/settlement/onchain-check-vector.json",
+          "sha256": "1fdefbb79a7a72e439e154300a8665e7f93d801725188a49d4b2b2f664308349"
+        }
+      ]
+    },
+    {
+      "lane": "oracle-index",
+      "source_commit": "e5aab58d5404b698c3d8f675466750074837381a",
+      "purpose": "BTC/USDT index, peg breaker and time-averaged liquidation research",
+      "status": "Research snapshot; excluded from normal build; not the active demo rail",
+      "files": [
+        {
+          "path": "src/agents/lender.ts",
+          "sha256": "1beba8125b37dd12c622365db0b6125460169b944a84469eba461d18d254cd88"
+        },
+        {
+          "path": "src/agents/platform-client.ts",
+          "sha256": "9f9d3b341f1534743a06b381488054b415b2d667e0ae37455310346eb4cacbdb"
+        },
+        {
+          "path": "src/core/terms.ts",
+          "sha256": "3368788c68bd47003b92deb5583c5823491c7ec1e9f054ab1611771f57e663f6"
+        },
+        {
+          "path": "src/market/termsheet.ts",
+          "sha256": "461549ad9b1eb2df4dff24c077885bc971b85f088495860f6c75baca195751ec"
+        },
+        {
+          "path": "src/oracle/feed.ts",
+          "sha256": "ead3b0cde33909a28b11da05f99164ec3b905aa92b45542a48b5800cfaaa0c96"
+        },
+        {
+          "path": "src/oracle/oracle.ts",
+          "sha256": "a1a565d0bb9b1fab0dc0175ff102f562642278d97cf36cbb37a176125e6f7360"
+        },
+        {
+          "path": "src/oracle/twap.ts",
+          "sha256": "3b533b861ab61f3dd8c97b4577156e433643b88f155212227ca465355de037a8"
+        },
+        {
+          "path": "src/registry/ladder.ts",
+          "sha256": "3567460b93118adca4152b7ae8002a74478c632598f7923592acaba1d0563093"
+        },
+        {
+          "path": "src/server/app.ts",
+          "sha256": "386739b5aaa1a4b094a63a1142b0035aab655070997ed71094119f4e95716465"
+        },
+        {
+          "path": "src/server/platform.ts",
+          "sha256": "3feac4b4c8f2761eef593b6d07b3341686c33919d6cb681c266caa5711fa0385"
+        },
+        {
+          "path": "test/ladder.test.ts",
+          "sha256": "48f5e8d113ad148ac7d52ef51ae44a488c94027b1390ae9639ff61d76141ca34"
+        },
+        {
+          "path": "test/lender-checkpoint.test.ts",
+          "sha256": "61fa1624dad0b9685661d42f74ca4349d61e0c1f2eea1dcddb1f89bbf20251bd"
+        },
+        {
+          "path": "test/oracle-venues.ts",
+          "sha256": "10fc404c28a8621f0f040dfa4695e3ba670563783c2a7582824ae65d31c1bb45"
+        },
+        {
+          "path": "test/oracle.test.ts",
+          "sha256": "36280ebaf098ab8bad98ecb1d2bdc8cf8d0062943ea8fc318fd71795cdfe9712"
+        },
+        {
+          "path": "test/platform.test.ts",
+          "sha256": "adcf2c7a4fbfbe1060b9ca85fcc1f086589b26c0ffb4d05f34c60a19677be3c1"
+        },
+        {
+          "path": "web/app.js",
+          "sha256": "3967940598c5c701dedaa026c4e724c5e93e427c872f6513955df8d0c4e8ee39"
+        }
+      ]
+    },
+    {
+      "lane": "joint-orchestration",
+      "source_commit": "3156cf17a7aae227d7cf52aadcda5716065e5958",
+      "purpose": "Joint-loan agent orchestration source with local safety fixes",
+      "status": "Research snapshot; excluded from normal build; not the active demo rail",
+      "files": [
+        {
+          "path": "src/joint/borrower.ts",
+          "sha256": "bcd67b10ca32cec7ac7d3828a2d7e3321faffbb2a036697c97f6d25c89ce17b4"
+        },
+        {
+          "path": "src/joint/checks.ts",
+          "sha256": "c48c38797db026e77bb1a42dd8b16f586071c84173d3c1912bdd69c1fb99aea5"
+        },
+        {
+          "path": "src/joint/contract-stub.ts",
+          "sha256": "739eff130eb567b254ad26b638c6b961afbd01fb0dac1a90bf49241ad14fe9c8"
+        },
+        {
+          "path": "src/joint/lender.ts",
+          "sha256": "a8fb84473ec1eef9a4af55923e45013cd7dacea83e4e96d89703a207b4a734d8"
+        },
+        {
+          "path": "src/joint/link.ts",
+          "sha256": "c185e940f307b2061ecd88bfcb7c653a2c49087b89a953a59c4e620733eafe1e"
+        },
+        {
+          "path": "src/joint/messages.ts",
+          "sha256": "e10e30815ff1199b6b25580a120a1dd810e1f539c9f442576b8e99f404f0c6ad"
+        },
+        {
+          "path": "src/joint/ports.ts",
+          "sha256": "06f19679558d3cea424fcd3dbe49a761751ee05be55cb6f358ea96a64303eb88"
+        },
+        {
+          "path": "src/joint/session.ts",
+          "sha256": "6e4e6b46dc1cfcc64c841bfb84a260efc0f251cb1a8d453e24b4d1768c1e401f"
+        },
+        {
+          "path": "src/joint/terms-v3.ts",
+          "sha256": "851a7d29aefcdeaac3081ee96ae605e43d97678b519e3a4993cb228f480b74a7"
+        },
+        {
+          "path": "src/market/kinds.ts",
+          "sha256": "dda85d97818857cc5bac268cec0d966f4b0460cfb8142018892d319b0564ddee"
+        },
+        {
+          "path": "test/joint-fakes.ts",
+          "sha256": "45e548ebb23c3ec1f482e2f5540c85e85fa1c10e386e30f1bcdb4e416ccaedbd"
+        },
+        {
+          "path": "test/joint-link.test.ts",
+          "sha256": "6008ab37b3316449e9e65c11f959f83805221bf8bf437c1f605972b02b97c91b"
+        },
+        {
+          "path": "test/joint-orchestration.test.ts",
+          "sha256": "ae971a47578c50642cf9420664798b71a3594557d611fec2ada5842f96963393"
+        },
+        {
+          "path": "test/joint-terms-v3.test.ts",
+          "sha256": "4c6cf617253e3c60159b3f39f2e8dbc580d51b2e132a9d62fb7f719c86645295"
+        }
+      ]
+    },
+    {
+      "lane": "joint-agent-link",
+      "source_commit": "71024f4fd16a4a8bd1ddd35563d0e5de75e65d12",
+      "purpose": "Nostr joint-agent messages and negotiated v3 economic terms",
+      "status": "Research snapshot; excluded from normal build; not the active demo rail",
+      "files": [
+        {
+          "path": "src/joint/borrower.ts",
+          "sha256": "84700465dbc4f281967ef8dde0c44a0d808c3df493f71c336832f9422d1584c9"
+        },
+        {
+          "path": "src/joint/checks.ts",
+          "sha256": "c48c38797db026e77bb1a42dd8b16f586071c84173d3c1912bdd69c1fb99aea5"
+        },
+        {
+          "path": "src/joint/contract-stub.ts",
+          "sha256": "739eff130eb567b254ad26b638c6b961afbd01fb0dac1a90bf49241ad14fe9c8"
+        },
+        {
+          "path": "src/joint/lender.ts",
+          "sha256": "ec138f9bee542a969137501d6aae644d74a54e642f6c8754a37c713076335f70"
+        },
+        {
+          "path": "src/joint/link.ts",
+          "sha256": "c185e940f307b2061ecd88bfcb7c653a2c49087b89a953a59c4e620733eafe1e"
+        },
+        {
+          "path": "src/joint/messages.ts",
+          "sha256": "e10e30815ff1199b6b25580a120a1dd810e1f539c9f442576b8e99f404f0c6ad"
+        },
+        {
+          "path": "src/joint/ports.ts",
+          "sha256": "06f19679558d3cea424fcd3dbe49a761751ee05be55cb6f358ea96a64303eb88"
+        },
+        {
+          "path": "src/joint/session.ts",
+          "sha256": "d83be8f0fe95e19a145039a92918e24aebb4de75d83bcc0e970a96925d039310"
+        },
+        {
+          "path": "src/joint/terms-v3.ts",
+          "sha256": "851a7d29aefcdeaac3081ee96ae605e43d97678b519e3a4993cb228f480b74a7"
+        },
+        {
+          "path": "src/market/kinds.ts",
+          "sha256": "dda85d97818857cc5bac268cec0d966f4b0460cfb8142018892d319b0564ddee"
+        },
+        {
+          "path": "test/joint-fakes.ts",
+          "sha256": "45e548ebb23c3ec1f482e2f5540c85e85fa1c10e386e30f1bcdb4e416ccaedbd"
+        },
+        {
+          "path": "test/joint-link.test.ts",
+          "sha256": "6008ab37b3316449e9e65c11f959f83805221bf8bf437c1f605972b02b97c91b"
+        },
+        {
+          "path": "test/joint-orchestration.test.ts",
+          "sha256": "b689ca673ad7a6ba074c38e21f7c6ac19aa516060ae462ca3dc76362555e6540"
+        },
+        {
+          "path": "test/joint-terms-v3.test.ts",
+          "sha256": "4c6cf617253e3c60159b3f39f2e8dbc580d51b2e132a9d62fb7f719c86645295"
+        }
+      ]
+    },
+    {
+      "lane": "native-wallet-adapter",
+      "source_commit": "38bb8043ffcbf6a547f76d5e200c3e6d153c8f72",
+      "purpose": "Pinned native wallet ownership, Android locking, portable input histories and joint preparation adapter source",
+      "status": "Research snapshot; excluded from normal build; not the active demo rail",
+      "files": [
+        {
+          "path": "native/rgb-core/.gitignore",
+          "sha256": "306fd52e74fca6746e12acc750f232de15e71da917756a1270d74c91f5eb7368"
+        },
+        {
+          "path": "native/rgb-core/Cargo.lock",
+          "sha256": "c4303c7deb22b2261dbe18625d70418acf85b95ccec3a5e1fd520041d70c004a"
+        },
+        {
+          "path": "native/rgb-core/Cargo.toml",
+          "sha256": "27bf5cb62fd92360ddc470467b5a13da16b3a869ab960c9ebffb3a0dab642acd"
+        },
+        {
+          "path": "native/rgb-core/Dockerfile",
+          "sha256": "2bbd99919f0b7b8e01c58d363810f64703a113525cd47f81035b1beb62d9f135"
+        },
+        {
+          "path": "native/rgb-core/asset-spike/.gitignore",
+          "sha256": "306fd52e74fca6746e12acc750f232de15e71da917756a1270d74c91f5eb7368"
+        },
+        {
+          "path": "native/rgb-core/asset-spike/Cargo.lock",
+          "sha256": "f499b0e7d8d97af671dfc4fca37db21efc08d5f1fbbd478a039e37cbfbf866f9"
+        },
+        {
+          "path": "native/rgb-core/asset-spike/Cargo.toml",
+          "sha256": "24232e28b7f7689dcdb242530f3a48c74ce06b22f18f989037b91609b653ebd2"
+        },
+        {
+          "path": "native/rgb-core/asset-spike/Dockerfile",
+          "sha256": "4222b66a250373011dabb184ac0484df207aaba70bc6db3cfa56a26ca6b19e0d"
+        },
+        {
+          "path": "native/rgb-core/asset-spike/fixtures/receipt.json",
+          "sha256": "c55bd443b332e51d72ba3df498076c52d7c34d68bfeaf40e190f126a6598926b"
+        },
+        {
+          "path": "native/rgb-core/asset-spike/scripts/cargo.sh",
+          "sha256": "866bb8630aa38f6e3ca210b113e8e265479208625978569d4bf6c2d87166fa17"
+        },
+        {
+          "path": "native/rgb-core/asset-spike/scripts/stack.sh",
+          "sha256": "75d848ecee81c8df7913c084c8a6d90643642a6c48fecd3c767b18aa8fa622f1"
+        },
+        {
+          "path": "native/rgb-core/asset-spike/src/main.rs",
+          "sha256": "9bbcdc2e7336e0a4c9288d2520da26bf1633ebbd38cc2dd49fe541d239e8170c"
+        },
+        {
+          "path": "native/rgb-core/scripts/cargo.sh",
+          "sha256": "049f14dd0a95f94ce2d3bac5616a4c48a5055500c35a04fbdd8617bb4dd6a0dd"
+        },
+        {
+          "path": "native/rgb-core/scripts/stack.sh",
+          "sha256": "a39403e04148cc8eb701ef584b724aab5c2833265be295a7d94bd934ca47b8b4"
+        },
+        {
+          "path": "native/rgb-core/src/bin/passbook-rgb-native.rs",
+          "sha256": "fccc75677edf7ef9716e09ae5320c66c57fbfa272aad728fef2e3e46c37fed95"
+        },
+        {
+          "path": "native/rgb-core/src/lib.rs",
+          "sha256": "f7552a753f9fe532a073686c044e025431b28ade44d66f430b13d3b04e6b12c3"
+        },
+        {
+          "path": "native/rgb-core/src/main.rs",
+          "sha256": "96304c97637f4e940d75e5eaa4141732428a2c97386f92d26790aa20d36030c3"
+        },
+        {
+          "path": "native/rgb-core/src/owner.rs",
+          "sha256": "d5ae769721acbf22af3d47750c83f089649770c659ffbf610c38424a10d2bac2"
+        },
+        {
+          "path": "src/rgb/native-journal.ts",
+          "sha256": "3ac56a65decb967ed7a7ddb4c124aa0eac0294bf51cac47397b84300a7de425f"
+        },
+        {
+          "path": "src/rgb/native-owner.ts",
+          "sha256": "19d197d2bdf24428e84fdb48b955c99a200a41e912865afab1a18488a14b6fb7"
+        },
+        {
+          "path": "src/rgb/native-port.ts",
+          "sha256": "55c4428d9532fd0e0e0432f306af2402ee07eb1fc0c1759d12569473ae49df94"
+        },
+        {
+          "path": "src/settlement/native-joint-preparation.ts",
+          "sha256": "1820bc98e08d234ca4dfbc96ada1bc0a234c3b1a0e91d14bc16e898e15b34e84"
+        },
+        {
+          "path": "src/settlement/onchain-enforcement.ts",
+          "sha256": "c34dc17f3a687ae45d4e1aae94dd491ff668ba14cdd0fb782c91867f2488d345"
+        },
+        {
+          "path": "src/settlement/onchain-transaction-policy.ts",
+          "sha256": "92d56848773d422b73669be9cfce92809ba04345b9164b036738aaca149c9f3a"
+        },
+        {
+          "path": "src/settlement/onchain-v3-contract.ts",
+          "sha256": "bdb27e25080e303a8b2005e7f381bf94e3baeb442dd6932212f09e129d491909"
+        },
+        {
+          "path": "test/onchain-enforcement.test.ts",
+          "sha256": "8b8aac84b5efc579a97d8c0269be1a2c384518dc685fa10575471d637c1577eb"
+        },
+        {
+          "path": "test/onchain-fixtures.ts",
+          "sha256": "5da940c1da8123147230c1c31ab04779ee697761b00e8ce62ad57aa105d707a1"
+        },
+        {
+          "path": "test/onchain-oracle-contract.test.ts",
+          "sha256": "116e49aa69c511a98a4584c7f246cc56c7e23db38db1efe7aea7a7f6d158b18d"
+        },
+        {
+          "path": "test/onchain-transaction-policy.test.ts",
+          "sha256": "a6b6663b42215a9039e381ed622f14e6db8f385377e0154584ba500bf7df57cf"
+        },
+        {
+          "path": "test/regtest/native-assets.test.ts",
+          "sha256": "04dcfb0f733903a5cfcb3bc102af8128943418c8412d6528b8fd744053b319b1"
+        },
+        {
+          "path": "test/regtest/native-helpers.ts",
+          "sha256": "933ed3d76745e0bd6a5c3765d1ec9ef2ae3765aacfc792f2b833ae3c10ee51f8"
+        },
+        {
+          "path": "test/regtest/native-joint.test.ts",
+          "sha256": "b5ba4df634d292363983f99e7f725daea95101d78db6c7beba9eb99d496e7686"
+        },
+        {
+          "path": "test/regtest/native-owner.test.ts",
+          "sha256": "347f747160ae79521c6ed0e4b3be98ebb0a8e6519443ccadf6e9094c7425a4a7"
+        }
+      ]
+    }
+  ]
+}

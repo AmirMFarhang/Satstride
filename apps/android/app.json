@@ -1,0 +1,48 @@
+{
+  "expo": {
+    "name": "Passbook",
+    "slug": "passbook-android",
+    "version": "0.1.0",
+    "description": "Thin client paired to the borrower's Passbook node. Demo build, test coins only; sideloaded, never published.",
+    "scheme": "passbook",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "platforms": [
+      "android"
+    ],
+    "android": {
+      "package": "dev.passbook.thinclient",
+      "versionCode": 1,
+      "allowBackup": false,
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.USE_BIOMETRIC"
+      ],
+      "blockedPermissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.SYSTEM_ALERT_WINDOW"
+      ]
+    },
+    "plugins": [
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Passbook uses the camera only to scan the pairing code on your dashboard.",
+          "recordAudioAndroid": false
+        }
+      ],
+      [
+        "expo-local-authentication",
+        {
+          "faceIDPermission": "Passbook asks for your phone's lock before you approve."
+        }
+      ],
+      "expo-secure-store",
+      "./plugins/with-loopback-cleartext",
+      "./plugins/with-release-signing",
+      "./plugins/with-release-no-minify"
+    ]
+  }
+}

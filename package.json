@@ -1,0 +1,51 @@
+{
+  "name": "passbook",
+  "version": "0.1.0",
+  "private": true,
+  "license": "Apache-2.0",
+  "description": "Satstride: a P2P Bitcoin-collateralised USDT-on-RGB credit line whose limit grows with on-chain repayment history. Platform server, sandbox and lender node.",
+  "type": "module",
+  "engines": {
+    "node": ">=22.13 <25"
+  },
+  "scripts": {
+    "server": "tsx src/server/main.ts",
+    "test": "tsx --test test/*.test.ts",
+    "typecheck": "tsc --noEmit",
+    "check": "npm run typecheck && npm test",
+    "test:regtest": "tsx --test --test-concurrency=1 test/regtest/*.test.ts",
+    "seed": "tsx infra/seed.ts",
+    "demo": "tsx src/cli/demo.ts",
+    "peer": "tsx src/cli/peer.ts",
+    "dev": "tsx src/cli/demo.ts --dashboard --serve",
+    "qvac:probe": "tsx src/cli/qvac-probe.ts",
+    "qvac:bench": "tsx src/cli/investigate-bench.ts",
+    "showcase": "bash infra/showcase.sh",
+    "passbook": "tsx src/cli/passbook.ts",
+    "check-run": "tsx src/cli/passbook.ts check-run",
+    "satstride": "tsx src/cli/passbook.ts"
+  },
+  "dependencies": {
+    "@noble/curves": "^2.4.0",
+    "@noble/hashes": "^2.4.0",
+    "@qvac/sdk": "^0.21.0",
+    "@scure/bip32": "^2.4.0",
+    "@scure/bip39": "^2.4.0",
+    "@tetherto/wdk": "^1.0.0-beta.19",
+    "@tetherto/wdk-wallet-btc": "1.0.0-beta.17",
+    "@utexo/rgb-sdk": "1.0.3",
+    "@utexo/wdk-wallet-rgb": "^2.0.3",
+    "bitcoinjs-lib": "^7.0.4",
+    "nostr-tools": "^2.25.2",
+    "tiny-secp256k1": "^2.2.4"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.4",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
+  },
+  "bin": {
+    "passbook": "bin/passbook.js",
+    "satstride": "bin/passbook.js"
+  }
+}

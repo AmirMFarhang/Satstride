@@ -1,0 +1,883 @@
+{
+  "v": 1,
+  "id": "passbook-scoring-contract",
+  "version": "1.2.0",
+  "description": "What a Passbook credit scorer may read, compute, keep and return. Every provider (in-process, the container fallback and the Compex governed scorer) releases the same passbook-check-outputs shape; the in-process and container scorers wrap it in a sandbox-signed result. This contract's hash appears in the descriptor, the signed result and the term sheet. Code measurements are bound to contract hashes by the signed release manifest (scorer.approved_builds), because a contract shipped inside an image cannot name that image's own digest.",
+  "models": [
+    {
+      "model_id": "qvac-sdk:qwen3-1.7b",
+      "material": "file",
+      "sha256": "c876f159707a4e4f70e045106c69db15bfc935a4981706fd4f65c6e7ea1e81c5",
+      "filename": "Qwen3-1.7B-Q4_0.gguf",
+      "use": "local AI investigation (QVAC)"
+    },
+    {
+      "model_id": "qvac-sdk:qwen3-4b",
+      "material": "file",
+      "sha256": "7485fe6f11af29433bc51cab58009521f205840f5b4ae3a32fa7f92e8534fdf5",
+      "filename": "Qwen3-4B-Q4_K_M.gguf",
+      "use": "local AI investigation (QVAC)"
+    },
+    {
+      "model_id": "playbook:passbook-v1",
+      "material": "deterministic-code",
+      "use": "deterministic baseline; cannot satisfy a lender that requires a local model"
+    },
+    {
+      "model_id": "rules",
+      "material": "deterministic-code",
+      "use": "fixed checks only; investigation status not_run"
+    }
+  ],
+  "inputs": {
+    "bundle_schema": "passbook-bundle-v1 (src/sandbox/types.ts validateBundle)",
+    "data_categories": [
+      "chain_checks",
+      "collateral_quote",
+      "history_proof",
+      "loan_request",
+      "own_keys",
+      "payer_signatures",
+      "scheduled_outflows",
+      "transaction_history"
+    ]
+  },
+  "outputs": {
+    "numbers": "income only as a 1,000 USDT band in Compex's format (en dash, thousands separators, e.g. 2,000–3,000 USDT/month); no balances, amounts, txids or counterparty keys",
+    "schema": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "v": {
+          "type": "integer",
+          "const": 1
+        },
+        "kind": {
+          "type": "string",
+          "const": "passbook-check-outputs"
+        },
+        "recommendation": {
+          "type": "string",
+          "enum": [
+            "QUALIFY",
+            "QUALIFY_WITH_HAIRCUT",
+            "DECLINE",
+            "ESCALATE"
+          ]
+        },
+        "income_band": {
+          "type": "string",
+          "pattern": "^(not_assessed|(0|[1-9][0-9]{0,2}(,[0-9]{3})*)–[1-9][0-9]{0,2}(,[0-9]{3})* USDT/month)$"
+        },
+        "checks": {
+          "type": "array",
+          "maxItems": 12,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "enum": [
+                  "injection",
+                  "categorise",
+                  "affordability",
+                  "headroom",
+                  "inflows",
+                  "sybil",
+                  "disclosure",
+                  "investigation",
+                  "reconcile",
+                  "anchor_confirmations",
+                  "history_reconciliation",
+                  "rgb_receive_validation"
+                ]
+              },
+              "ok": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "id",
+              "ok"
+            ]
+          }
+        },
+        "findings": {
+          "type": "array",
+          "maxItems": 16,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "prefunded_inflow",
+                  "circular_flow",
+                  "income_is_loan",
+                  "new_payer",
+                  "irregular_genuine",
+                  "injection_attempt",
+                  "fan_in_burst",
+                  "pass_through",
+                  "INCOME_MEETS_REQUIREMENT",
+                  "INCOME_BELOW_REQUIREMENT",
+                  "INCOME_RECURRING",
+                  "INCOME_VOLATILE",
+                  "INCOME_SIGNED_BY_PAYERS",
+                  "HISTORY_TOO_SHORT",
+                  "LOAN_LIKE_INFLOWS",
+                  "SELF_TRANSFERS_EXCLUDED",
+                  "AFFORDABILITY_OK",
+                  "AFFORDABILITY_SHORTFALL",
+                  "CHAIN_CHECKS_PASSED",
+                  "CHAIN_CHECK_FAILED",
+                  "INSTRUCTIONS_IN_MEMOS"
+                ]
+              }
+            },
+            "required": [
+              "type"
+            ]
+          }
+        },
+        "lender_note": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 400
+        },
+        "borrower_pk": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "lender_pk": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "purpose_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "bundle_hash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "required": [
+        "v",
+        "kind",
+        "recommendation",
+        "income_band",
+        "checks",
+        "findings",
+        "lender_note",
+        "borrower_pk",
+        "lender_pk",
+        "purpose_id",
+        "bundle_hash"
+      ]
+    },
+    "vocabularies": "check ids: the Passbook sandbox's plus the three chain checks Passbook signs before a Compex run; finding types: the Passbook sandbox's typologies (in-process and container) or the Compex passbook-credit finding codes (Compex)"
+  },
+  "egress": "none",
+  "retention": "none",
+  "budgets": {
+    "max_tool_calls": 6,
+    "max_model_calls": 8,
+    "max_decision_attempts": 2,
+    "turn_ms": 20000,
+    "total_ms": 90000
+  },
+  "fallback": {
+    "failed": "never passes a required investigation",
+    "not_run": "never passes a required investigation",
+    "model_unavailable": "reported as failed or not_run, never as clean"
+  },
+  "container_result": {
+    "schema": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "v": {
+          "type": "integer",
+          "const": 1
+        },
+        "kind": {
+          "type": "string",
+          "const": "passbook-check-result"
+        },
+        "scorer": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "provider": {
+              "type": "string",
+              "enum": [
+                "in-process",
+                "container"
+              ]
+            },
+            "scorer_id": {
+              "type": "string",
+              "pattern": "^[a-z0-9][a-z0-9:._-]{0,80}$"
+            },
+            "trust": {
+              "type": "string",
+              "enum": [
+                "dev-inprocess"
+              ]
+            },
+            "code_measurement": {
+              "type": "string",
+              "pattern": "^(source|sha256):[0-9a-f]{64}$"
+            },
+            "contract_hash": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "enclave_pubkey": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          },
+          "required": [
+            "provider",
+            "scorer_id",
+            "trust",
+            "code_measurement",
+            "contract_hash",
+            "enclave_pubkey"
+          ]
+        },
+        "request_hash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "consent_hash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "height": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100000000
+        },
+        "outputs": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "v": {
+              "type": "integer",
+              "const": 1
+            },
+            "kind": {
+              "type": "string",
+              "const": "passbook-check-outputs"
+            },
+            "recommendation": {
+              "type": "string",
+              "enum": [
+                "QUALIFY",
+                "QUALIFY_WITH_HAIRCUT",
+                "DECLINE",
+                "ESCALATE"
+              ]
+            },
+            "income_band": {
+              "type": "string",
+              "pattern": "^(not_assessed|(0|[1-9][0-9]{0,2}(,[0-9]{3})*)–[1-9][0-9]{0,2}(,[0-9]{3})* USDT/month)$"
+            },
+            "checks": {
+              "type": "array",
+              "maxItems": 12,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "enum": [
+                      "injection",
+                      "categorise",
+                      "affordability",
+                      "headroom",
+                      "inflows",
+                      "sybil",
+                      "disclosure",
+                      "investigation",
+                      "reconcile",
+                      "anchor_confirmations",
+                      "history_reconciliation",
+                      "rgb_receive_validation"
+                    ]
+                  },
+                  "ok": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "id",
+                  "ok"
+                ]
+              }
+            },
+            "findings": {
+              "type": "array",
+              "maxItems": 16,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "prefunded_inflow",
+                      "circular_flow",
+                      "income_is_loan",
+                      "new_payer",
+                      "irregular_genuine",
+                      "injection_attempt",
+                      "fan_in_burst",
+                      "pass_through",
+                      "INCOME_MEETS_REQUIREMENT",
+                      "INCOME_BELOW_REQUIREMENT",
+                      "INCOME_RECURRING",
+                      "INCOME_VOLATILE",
+                      "INCOME_SIGNED_BY_PAYERS",
+                      "HISTORY_TOO_SHORT",
+                      "LOAN_LIKE_INFLOWS",
+                      "SELF_TRANSFERS_EXCLUDED",
+                      "AFFORDABILITY_OK",
+                      "AFFORDABILITY_SHORTFALL",
+                      "CHAIN_CHECKS_PASSED",
+                      "CHAIN_CHECK_FAILED",
+                      "INSTRUCTIONS_IN_MEMOS"
+                    ]
+                  }
+                },
+                "required": [
+                  "type"
+                ]
+              }
+            },
+            "lender_note": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 400
+            },
+            "borrower_pk": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "lender_pk": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "purpose_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            },
+            "bundle_hash": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          },
+          "required": [
+            "v",
+            "kind",
+            "recommendation",
+            "income_band",
+            "checks",
+            "findings",
+            "lender_note",
+            "borrower_pk",
+            "lender_pk",
+            "purpose_id",
+            "bundle_hash"
+          ]
+        },
+        "evidence": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "investigation": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "done",
+                    "failed",
+                    "not_run"
+                  ]
+                },
+                "verdict": {
+                  "type": "string",
+                  "enum": [
+                    "clean",
+                    "concerns",
+                    "fraud"
+                  ]
+                },
+                "findings": {
+                  "type": "array",
+                  "maxItems": 8,
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "prefunded_inflow",
+                          "circular_flow",
+                          "income_is_loan",
+                          "new_payer",
+                          "irregular_genuine",
+                          "injection_attempt",
+                          "fan_in_burst",
+                          "pass_through"
+                        ]
+                      },
+                      "count": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 200
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "count"
+                    ]
+                  }
+                },
+                "lender_note": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 400
+                },
+                "model": {
+                  "type": "string",
+                  "pattern": "^[a-zA-Z0-9_.:/@-]{1,160}$"
+                },
+                "turns": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 8
+                },
+                "tokens_per_second": {
+                  "oneOf": [
+                    {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 100000
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "hallucinations": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 200
+                },
+                "rejected": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 200
+                },
+                "reason": {
+                  "type": "string",
+                  "pattern": "^[A-Z][A-Z0-9_:]{0,79}$"
+                },
+                "policy": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "verdict": {
+                      "type": "string",
+                      "enum": [
+                        "clean",
+                        "concerns",
+                        "fraud",
+                        "failed"
+                      ]
+                    },
+                    "reason_codes": {
+                      "type": "array",
+                      "maxItems": 40,
+                      "items": {
+                        "type": "string",
+                        "pattern": "^[A-Z][A-Z0-9_:]{0,79}$"
+                      }
+                    },
+                    "hard_stops": {
+                      "type": "array",
+                      "maxItems": 40,
+                      "items": {
+                        "type": "string",
+                        "pattern": "^[A-Z][A-Z0-9_:]{0,79}$"
+                      }
+                    },
+                    "coverage_gaps": {
+                      "type": "array",
+                      "maxItems": 40,
+                      "items": {
+                        "type": "string",
+                        "pattern": "^[A-Z][A-Z0-9_:]{0,79}$"
+                      }
+                    }
+                  },
+                  "required": [
+                    "verdict",
+                    "reason_codes",
+                    "hard_stops",
+                    "coverage_gaps"
+                  ]
+                }
+              },
+              "required": [
+                "status",
+                "findings",
+                "lender_note",
+                "model",
+                "turns",
+                "tokens_per_second",
+                "hallucinations",
+                "rejected"
+              ]
+            },
+            "run_record": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "v": {
+                  "type": "integer",
+                  "const": 1
+                },
+                "kind": {
+                  "type": "string",
+                  "const": "passbook-signed-run"
+                },
+                "assurance": {
+                  "type": "string",
+                  "const": "software-signature-only"
+                },
+                "sandbox_pk": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{64}$"
+                },
+                "bundle_hash": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{64}$"
+                },
+                "image_digest": {
+                  "type": "string",
+                  "pattern": "^(in-process|sha256:[0-9a-f]{64})$"
+                },
+                "network_mode": {
+                  "type": "string",
+                  "enum": [
+                    "in-process-host",
+                    "none",
+                    "host",
+                    "bridge",
+                    "internal",
+                    "declared-remote"
+                  ]
+                },
+                "materials": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "system_prompt_sha256": {
+                      "type": "string",
+                      "pattern": "^[0-9a-f]{64}$"
+                    },
+                    "tool_definitions_sha256": {
+                      "type": "string",
+                      "pattern": "^[0-9a-f]{64}$"
+                    },
+                    "model_id": {
+                      "type": "string",
+                      "pattern": "^[a-zA-Z0-9_.:/@-]{1,160}$"
+                    },
+                    "model_file_sha256": {
+                      "oneOf": [
+                        {
+                          "type": "string",
+                          "pattern": "^[0-9a-f]{64}$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "model_material_kind": {
+                      "type": "string",
+                      "enum": [
+                        "file",
+                        "deterministic-code",
+                        "unavailable"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "system_prompt_sha256",
+                    "tool_definitions_sha256",
+                    "model_id",
+                    "model_file_sha256",
+                    "model_material_kind"
+                  ]
+                },
+                "budgets": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "max_tool_calls": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 1000
+                    },
+                    "max_model_calls": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 1000
+                    },
+                    "max_decision_attempts": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 10
+                    },
+                    "turn_ms": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 600000
+                    },
+                    "total_ms": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 600000
+                    }
+                  },
+                  "required": [
+                    "max_tool_calls",
+                    "max_model_calls",
+                    "max_decision_attempts",
+                    "turn_ms",
+                    "total_ms"
+                  ]
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "done",
+                    "failed",
+                    "not_run"
+                  ]
+                },
+                "tool_calls": {
+                  "type": "array",
+                  "maxItems": 6,
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "n": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 6
+                      },
+                      "name": {
+                        "type": "string",
+                        "enum": [
+                          "list_counterparties",
+                          "flows_with",
+                          "outflows_before",
+                          "month_table",
+                          "payer_profile",
+                          "read_memos"
+                        ]
+                      },
+                      "evidence_id": {
+                        "type": "string",
+                        "pattern": "^E[1-9][0-9]*$"
+                      },
+                      "arguments_sha256": {
+                        "type": "string",
+                        "pattern": "^[0-9a-f]{64}$"
+                      },
+                      "result_sha256": {
+                        "type": "string",
+                        "pattern": "^[0-9a-f]{64}$"
+                      },
+                      "call_sha256": {
+                        "type": "string",
+                        "pattern": "^[0-9a-f]{64}$"
+                      },
+                      "elapsed_ms": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 20000
+                      }
+                    },
+                    "required": [
+                      "n",
+                      "name",
+                      "evidence_id",
+                      "arguments_sha256",
+                      "result_sha256",
+                      "call_sha256",
+                      "elapsed_ms"
+                    ]
+                  }
+                },
+                "model_calls": {
+                  "type": "array",
+                  "maxItems": 8,
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "n": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 8
+                      },
+                      "request_sha256": {
+                        "type": "string",
+                        "pattern": "^[0-9a-f]{64}$"
+                      },
+                      "response_sha256": {
+                        "type": "string",
+                        "pattern": "^[0-9a-f]{64}$"
+                      },
+                      "elapsed_ms": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 20000
+                      }
+                    },
+                    "required": [
+                      "n",
+                      "request_sha256",
+                      "response_sha256",
+                      "elapsed_ms"
+                    ]
+                  }
+                },
+                "decision_attempts": {
+                  "type": "array",
+                  "maxItems": 2,
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "n": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2
+                      },
+                      "report_sha256": {
+                        "type": "string",
+                        "pattern": "^[0-9a-f]{64}$"
+                      },
+                      "accepted": {
+                        "type": "boolean"
+                      },
+                      "reason_codes": {
+                        "type": "array",
+                        "maxItems": 40,
+                        "items": {
+                          "type": "string",
+                          "pattern": "^[A-Z][A-Z0-9_:]{0,79}$"
+                        }
+                      },
+                      "evidence_count": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 6
+                      }
+                    },
+                    "required": [
+                      "n",
+                      "report_sha256",
+                      "accepted",
+                      "reason_codes",
+                      "evidence_count"
+                    ]
+                  }
+                },
+                "duration_ms": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 90000
+                },
+                "public_result_sha256": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{64}$"
+                },
+                "policy_sha256": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{64}$"
+                },
+                "private_evidence_sha256": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{64}$"
+                },
+                "sig": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{128}$"
+                }
+              },
+              "required": [
+                "v",
+                "kind",
+                "assurance",
+                "sandbox_pk",
+                "bundle_hash",
+                "image_digest",
+                "network_mode",
+                "materials",
+                "budgets",
+                "status",
+                "tool_calls",
+                "model_calls",
+                "decision_attempts",
+                "duration_ms",
+                "public_result_sha256",
+                "policy_sha256",
+                "private_evidence_sha256",
+                "sig"
+              ]
+            }
+          },
+          "required": [
+            "investigation",
+            "run_record"
+          ]
+        },
+        "sig": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{128}$"
+        }
+      },
+      "required": [
+        "v",
+        "kind",
+        "scorer",
+        "request_hash",
+        "consent_hash",
+        "height",
+        "outputs",
+        "evidence",
+        "sig"
+      ]
+    }
+  }
+}

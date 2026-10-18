@@ -1,0 +1,78 @@
+# Typecheck and unit tests on every pull request and on main. The regtest suite
+# needs a Bitcoin/RGB/Lightning stack and runs separately (npm run test:regtest).
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - run: npm run check
+
+  # The Android thin client (apps/android) has its own package.json and lockfile:
+  # typecheck and its Jest UI tests. No Android SDK needed; the APK is built locally.
+  android-app:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: apps/android
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: apps/android/package-lock.json
+      - run: npm ci --no-audit --no-fund
+      - run: npm run check
+
+  # The on-device wallet (apps/mobile) has its own package.json and lockfile:
+  # typecheck and its unit tests. No Android SDK needed; the APK is built locally.
+  # Its parity tests check the phone's signatures with the repository's src/, which
+  # resolves its packages from the root install.
+  mobile-app:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: apps/mobile
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            apps/mobile/package-lock.json
+      - run: npm ci --no-audit --no-fund
+        working-directory: .
+      - run: npm ci --no-audit --no-fund
+      - run: npm run check
+
+  onchain-check-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - run: npx tsx --test src/settlement/onchain-check-contract.test.ts src/settlement/onchain-check-interleavings.test.ts

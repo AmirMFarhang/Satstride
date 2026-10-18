@@ -1,0 +1,47 @@
+# Passbook on testnet4: DESIGNED, NOT RUN. The profile loads and its Esplora
+# answers as testnet4, but no Passbook loan has run on testnet4. The planned
+# testnet4 run uses RGB Lightning (RLN nodes on testnet4) and comes after the
+# hackathon; see docs/WALLET.md. Test coins only: "testnet4 BTC" and
+# "test USDT (testnet4)", never BTC or USDT.
+
+network: testnet4
+endpoints:
+  # verified 17 Oct 2026: answers with the testnet4 genesis block
+  esplora: https://mempool.space/testnet4/api
+  rgb_indexer: https://mempool.space/testnet4/api
+  # the RGB proxy stores consignments by recipient id; it is not bound to a chain
+  rgb_proxy: rpcs://proxy.kaleidoswap.com/json-rpc
+  # no order-book relay for the public run; the loan is arranged directly
+  nostr: []
+
+scorer:
+  provider: in-process
+  fallback: none
+  min_trust_for_lenders: dev-inprocess
+  approved_builds: scorer-releases.json
+
+settlement:
+  default: cosign-rgb
+  enabled: [cosign-rgb]
+
+negotiation:
+  enabled: true
+  max_rounds: 3
+
+compliance:
+  identity: none
+  sanctions: none
+  consent_receipts: required
+  approvals: { maker_checker_above_usdt: 5000 }
+  data_retention_days: 0
+
+asset:
+  id_from: ../data/testnet4/state.json
+
+economics:
+  platform_share_bps: 1500
+  max_apr_bps: 1900
+  max_ltv_bps_by_term: { 30: 6500, 60: 6000, 90: 5500 }
+  day_count: 'ACT/365'
+  blocks_per_day: 1
+  fee_grace_blocks: 6

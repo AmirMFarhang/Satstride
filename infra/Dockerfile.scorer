@@ -1,0 +1,15 @@
+# The container scorer (fallback provider): the sandbox behind the scoring
+# contract (src/scorer/server.ts). Pass SANDBOX_IMAGE_DIGEST at run time so
+# its descriptor names this image; without it the descriptor carries a source
+# measurement. Nothing is written to disk (retention: none).
+FROM node:22-slim
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev --no-audit --no-fund && npm i --no-save tsx@4
+COPY tsconfig.json ./
+COPY contracts ./contracts
+COPY src ./src
+USER node
+ENV SCORER_HOST=0.0.0.0
+EXPOSE 4181
+CMD ["npx", "tsx", "src/scorer/server.ts"]

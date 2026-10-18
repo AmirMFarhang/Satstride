@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "scope": "Source typechecks and unit tests; independent from live demonstration transaction records",
+  "source": {
+    "provider": "693d09ccafe86ecf7ffbcf1c9207f7ee80e8b5ea",
+    "mobile": "38164c6870c47872a3d76998d070c10a35fe80ea",
+    "console": "a2212bdade6fd087f5f31fa499f5e369e6b1289d"
+  },
+  "checks": [
+    {
+      "directory": ".",
+      "command": "npm run check",
+      "typecheck": "passed",
+      "unit_tests": {
+        "passed": 825,
+        "failed": 0,
+        "skipped": 5,
+        "total": 830
+      },
+      "skip_reasons": [
+        "Four optional external compex-verify comparisons require COMPEX_VERIFY",
+        "One older public-network startup guard test is explicitly skipped in the source"
+      ]
+    },
+    {
+      "directory": "apps/mobile",
+      "command": "npm run check",
+      "typecheck": "passed for app files; shared root source separately typechecked",
+      "native_node_binding": "rebuilt from the pinned installed package",
+      "unit_tests": {
+        "passed": 149,
+        "failed": 0,
+        "skipped": 0,
+        "total": 149
+      }
+    },
+    {
+      "directory": "apps/mobile",
+      "command": "npm run apk",
+      "result": "passed",
+      "version": "0.9.10",
+      "version_code": 19,
+      "artifact_sha256": "53532c460ed203fb719d0f51e5b7e6dd67e56f714070a58b35aff9a40382902a",
+      "binary_in_git": false
+    },
+    {
+      "directory": "apps/mobile",
+      "command": "tsx --test --test-concurrency=1 __tests__/regtest/phone-lender.test.ts",
+      "result": "passed",
+      "tests_passed": 1,
+      "tests_failed": 0,
+      "duration_seconds": 58.67,
+      "runtime_source": "38164c6870c47872a3d76998d070c10a35fe80ea",
+      "harness_source": "565b8da0394b31948c0dfb44d0d58087e0903fa5",
+      "scope": "Fresh isolated regtest Bitcoin/RGB lifecycle: funding, IOU, repayment, cooperative release and platform fee",
+      "scorer": "In-process rules; no live model or governed Compex execution in this integration test"
+    }
+  ],
+  "source_hygiene": {
+    "historical_session_markdown_included": false,
+    "compiled_application_binaries_in_git": false,
+    "credentials_pattern_findings": 0,
+    "broken_readme_local_resources": 0
+  },
+  "research_scope": "The experiments directory contains separately identified research source and is excluded from normal build and test commands",
+  "physical_device_demonstration": "demo-receipt.json"
+}

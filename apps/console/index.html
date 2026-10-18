@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <meta name="color-scheme" content="light dark">
+  <title>Satstride Provider Console</title>
+  <link rel="icon" href="./brand.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./console.css">
+  <script src="./js/theme-boot.js"></script>
+  <script type="module" src="./console.js"></script>
+</head>
+<body>
+  <div id="root" class="boot" aria-busy="true">
+    <div class="boot-mark"><img src="./brand.svg" alt="" width="40" height="40"></div>
+  </div>
+  <div id="tip" class="tip" role="tooltip" hidden></div>
+  <div id="toasts" class="toasts" aria-live="polite"></div>
+  <noscript><p class="noscript">The Satstride operator console needs JavaScript (browser ES modules and WebCrypto).</p></noscript>
+</body>
+</html>

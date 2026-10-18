@@ -1,0 +1,4 @@
+{
+  "//": "ES modules, so the root test suite (Node, TypeScript NodeNext) runs these files as they are; Metro and Jest resolve the .js imports to .ts.",
+  "type": "module"
+}

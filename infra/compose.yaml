@@ -1,0 +1,113 @@
+# Regtest stack for Passbook. Mirrors rgb-lib's own test compose file
+# (bitcoind + electrs + RGB proxy) and adds a Nostr relay and the sandbox.
+#
+#   ./infra/regtest.sh start      # brings this up and mines the first 101 blocks
+#   ./infra/regtest.sh mine 1
+#   ./infra/regtest.sh stop
+#
+# Host ports default away from rgb-lib's own test stack (50001, 3000) so both
+# can run on one machine; override with the PASSBOOK_*_PORT variables:
+#   18443 bitcoind RPC (user/password)   50011 electrs   3010 rgb-proxy   7777 nostr relay   4180 sandbox
+#
+# The hashbeam images already run bitcoind with -regtest -txindex and electrs
+# against bitcoind:18443; only the credentials are set here. They are published
+# for amd64 only and run under emulation on Apple silicon.
+
+name: passbook
+
+services:
+  bitcoind:
+    image: registry.gitlab.com/hashbeam/docker/bitcoind:30.2
+    platform: linux/amd64
+    command:
+      - -fallbackfee=0.0002
+      - -rpcuser=user
+      - -rpcpassword=password
+    ports:
+      - "${PASSBOOK_BIND_ADDRESS:-127.0.0.1}:${PASSBOOK_BITCOIND_PORT:-18443}:18443"
+    volumes:
+      - bitcoind:/srv/app/.bitcoin
+    networks: [chain]
+
+  electrs:
+    image: registry.gitlab.com/hashbeam/docker/electrs:0.11.0
+    platform: linux/amd64
+    depends_on: [bitcoind]
+    environment:
+      BTCHOST: bitcoind
+      BTCUSER: user
+      BTCPASS: password
+    ports:
+      - "${PASSBOOK_BIND_ADDRESS:-127.0.0.1}:${PASSBOOK_ELECTRS_PORT:-50011}:50001"
+    volumes:
+      - electrs:/srv/app/db
+    networks: [chain]
+
+  # rgb-lib keeps each wallet's proxy connection in an HTTP keep-alive pool
+  # (reqwest/hyper, idle up to 90 s), while Node closes an idle connection after
+  # 5 s. A wallet that calls the proxy again about 5 s after its last call writes
+  # onto a socket the server is just closing; the request never arrives and
+  # send_begin fails with InvalidTransportEndpoints. The server therefore keeps
+  # idle connections longer than the client does, so the client always closes first.
+  rgb-proxy:
+    image: ghcr.io/rgb-tools/rgb-proxy-server:0.3.0
+    platform: linux/amd64
+    command:
+      - tini
+      - --
+      - node
+      - -e
+      - const server = require('./dist/server.js').default; server.keepAliveTimeout = 120000; server.headersTimeout = 121000
+    ports:
+      - "${PASSBOOK_BIND_ADDRESS:-127.0.0.1}:${PASSBOOK_PROXY_PORT:-3010}:3000"
+    volumes:
+      - proxy:/home/node
+    networks: [chain]
+
+  nostr-relay:
+    image: scsibug/nostr-rs-relay:0.9.0
+    platform: linux/amd64
+    ports:
+      - "${PASSBOOK_BIND_ADDRESS:-127.0.0.1}:${PASSBOOK_RELAY_PORT:-7777}:8080"
+    volumes:
+      - relay:/usr/src/app/db
+    networks: [chain]
+
+  # The sandbox: its own key, no volumes, reachable only from the platform.
+  # It reaches bitcoind for confirmations and the host's QVAC server for inference.
+  sandbox:
+    build:
+      context: ..
+      dockerfile: infra/Dockerfile.sandbox
+    environment:
+      BITCOIND_URL: http://bitcoind:18443
+      BITCOIND_USER: user
+      BITCOIND_PASSWORD: password
+      # the container is read-only with no volumes, so it cannot hold a model: rules, or qvac-http to a QVAC server on the host
+      PASSBOOK_AI: ${PASSBOOK_SANDBOX_AI:-rules}
+      QVAC_BASE_URL: ${PASSBOOK_SANDBOX_QVAC_URL:-http://host.docker.internal:11434/v1}
+      QVAC_MODEL: ${QVAC_MODEL:-qwen3-4b}
+      PASSBOOK_RUN_DIR: /tmp/passbook-run-records
+      SANDBOX_IMAGE_DIGEST: ${SANDBOX_IMAGE_DIGEST:-unavailable}
+      BLOCKS_PER_MONTH: "30"
+      ORACLE_PK: ${ORACLE_PK:-}
+      SANDBOX_PORT: "4180"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - "127.0.0.1:${PASSBOOK_SANDBOX_PORT:-4180}:4180"
+    networks: [chain, sandbox]
+    read_only: true
+    tmpfs:
+      - /tmp
+
+networks:
+  chain:
+  sandbox:
+    internal: true
+
+volumes:
+  bitcoind:
+  electrs:
+  proxy:
+  relay:

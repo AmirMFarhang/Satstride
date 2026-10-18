@@ -1,0 +1,73 @@
+# Typecheck and unit tests on every pull request and on main. The regtest suite
+# needs a Bitcoin/RGB/Lightning stack and runs separately (npm run test:regtest).
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  # G0 stays in Protocol's claimed src/settlement paths; no chain/native services.
+  onchain-g0:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - run: npx tsx --test src/settlement/onchain-g0.test.ts
+
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - run: npm run check
+
+  # The Android thin client (apps/android) has its own package.json and lockfile:
+  # typecheck and its Jest UI tests. No Android SDK needed; the APK is built locally.
+  android-app:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: apps/android
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: apps/android/package-lock.json
+      - run: npm ci --no-audit --no-fund
+      - run: npm run check
+
+  # The on-device wallet (apps/mobile) has its own package.json and lockfile:
+  # typecheck and its unit tests. No Android SDK needed; the APK is built locally.
+  mobile-app:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: apps/mobile
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: apps/mobile/package-lock.json
+      - run: npm ci --no-audit --no-fund
+      - run: npm run check

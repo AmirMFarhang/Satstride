@@ -1,0 +1,82 @@
+# Passbook deployment config: one per deployment, loaded and validated at start
+# (src/core/config.ts). Demo values shown. A wrong or unsupported value refuses
+# to start with a message naming every problem. Override the path with
+# PASSBOOK_CONFIG.
+
+scorer:
+  # in-process | container | compex | compex-nitro (roadmap; refuses to start)
+  # Trust each can reach: dev-inprocess (in-process, container)
+  #   < software-evidence (compex: LOCAL_HARDENED_DOCKER, scorer host trusted)
+  #   < hardware-attested (compex-nitro). Passbook never fabricates attestation.
+  # This file is what runs today. The Compex target is
+  # infra/passbook.config.compex.yaml (provider compex, fallback container).
+  provider: container
+  # none | container | in-process: used only if the primary is unavailable;
+  # its results keep their own trust level and are labelled as fallback
+  fallback: in-process
+  min_trust_for_lenders: dev-inprocess
+  # signed allowlist of scorer measurements + contract hashes
+  approved_builds: infra/scorer-releases.json
+  url: http://127.0.0.1:4181
+
+settlement:
+  # cosign-rgb | ln-rln | onchain-swap (onchain-swap is not built yet)
+  default: cosign-rgb
+  # cosign-rgb must always be enabled: it is the fallback
+  enabled: [cosign-rgb, ln-rln]
+
+negotiation:
+  enabled: true
+  max_rounds: 3
+
+compliance:
+  # none | provider:<name>   (hook only in the demo)
+  identity: none
+  # none | opensanctions     (hook only in the demo)
+  sanctions: none
+  consent_receipts: required
+  approvals: { maker_checker_above_usdt: 5000 }
+  # the box keeps nothing; the run record keeps hashes only
+  data_retention_days: 0
+
+asset:
+  # test USDT on regtest; the production asset is a deployment choice (docs/COMPLIANCE.md)
+  id_from: infra/state.json
+  # Chosen per deployment and jurisdiction: the protocol carries only the RGB
+  # asset id and never names a token. An EU deployment would pick an e-money
+  # token authorised under MiCA (to confirm with counsel), not this one.
+  ticker: USDT
+  label: 'test USDT'
+  precision: 6
+  jurisdiction: regtest-demo
+
+economics:
+  # The borrower pays principal + the lender's term interest, nothing else. The
+  # lender pays the platform this share of each loan's interest after the loan
+  # closes, in USDT over RGB: the same on repaid, split or liquidated loans.
+  platform_share_bps: 1500
+  # Registration and negotiation refuse an APR above this: a conservative ceiling
+  # under the Italian usury threshold (19.10% Q4 2026, docs/REVENUE.md); to confirm with counsel.
+  max_apr_bps: 1900
+  # Highest LTV for terms up to N days; longer terms are refused. The 65% step
+  # only for 30 days or less (#17's Monte Carlo: 65% on 90 days liquidates ~1/3).
+  max_ltv_bps_by_term: { 30: 6500, 60: 6000, 90: 5500 }
+  # interest = principal x APR x days / 365, half-up to 0.01 USDT
+  day_count: 'ACT/365'
+  # the demo maps 1 month = 30 blocks, so 1 block = 1 day (mainnet: 144)
+  blocks_per_day: 1
+  # an unpaid platform fee blocks the lender's offers and new loans this many
+  # blocks after the loan closed (short on regtest; 144 = one day on mainnet)
+  fee_grace_blocks: 6
+
+credit:
+  # The credit agent's read-only history chains (src/networks, docs/LAYERS.md).
+  # Separate from the loan chain: reading Bitcoin mainnet never lets anything
+  # spend there, and the agent takes proofs only, never a key or seed.
+  history_chains: [bitcoin]
+  # the borrower device's source, and the lender's OWN source (must differ)
+  sources: { bitcoin: 'https://mempool.space/api' }
+  lender_sources: { bitcoin: 'https://blockstream.info/api' }
+  # offline fallback, labelled "recorded mainnet data, block N"
+  snapshot: test/fixtures/networks/mainnet-snapshot.json
+  window_days: 365

@@ -1,0 +1,136 @@
+{
+  "about": "Stop 2 for one term sheet. The phone and the dashboard post the same request; the borrower agent on the node then signs the same approval payload.",
+  "borrower_label": "device-fixture-borrower",
+  "lender_name": "Lender 1",
+  "termsheet": {
+    "v": 2,
+    "kind": "passbook-termsheet",
+    "negotiation": {
+      "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "accept_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+    },
+    "terms": {
+      "borrower_pk": "716618470adbc26411832d52a0d66a5cc1991cae761b3b217848a0d7f0a9c8e7",
+      "lender_pk": "5072d8b50909c1b949bdcdf02d48e101d6b5fe00f339db19d535c37db2b14217",
+      "platform_pk": "a7ca34123d8cea699c899dff210a9c024e4e9bb56772ceb6ab586f06bd01b7b0",
+      "asset_id": "rgb:usdt-test",
+      "principal": 600000000,
+      "fee": 5920000,
+      "collateral_sats": 1211840,
+      "oracle_quote": {
+        "price_cents": 10000000,
+        "height": 500,
+        "oracle_pk": "9fa5f54926c00f8415be80a8d6257712f972ae7523f1019704555423a6e189c7",
+        "sig": "c1b799dee753674e00d21a497b888a592e52c2140a203e4852c6be2d09d1d5e77b438aac59320c26454e804037beff0c5ab09f14197f6dea8758e31ac7d30971"
+      },
+      "open_height": 500,
+      "maturity_height": 530,
+      "grace_blocks": 5,
+      "recovery_height": 555,
+      "ladder_step": 0,
+      "ltv_bps": 5000,
+      "prev_passbook_txid": null,
+      "nonce": "012bb33d962f2772a95b10b9d14a390ce697b1df882010c73cf75b41ee6e9c65",
+      "v": 1
+    },
+    "binding_salt": "7878787878787878787878787878787878787878787878787878787878787878",
+    "apr_bps": 1200,
+    "fees": {
+      "interest": 5920000,
+      "borrower_other": 0
+    },
+    "collateral": {
+      "sats": 1211840,
+      "ltv_bps": 5000,
+      "margin_call_ltv_bps": 7000,
+      "liquidation_ltv_bps": 8000,
+      "margin_call_price_cents": 7142857,
+      "liquidation_price_cents": 6250000,
+      "cure_blocks": 10
+    },
+    "default_terms": {
+      "maturity_height": 530,
+      "grace_blocks": 5,
+      "recovery_height": 555
+    },
+    "settlement": {
+      "kind": "cosign-rgb"
+    },
+    "scorer": {
+      "provider": "in-process",
+      "scorer_id": "passbook-sandbox",
+      "code_measurement": "source:cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd",
+      "contract_hash": "efefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefef",
+      "trust": "dev-inprocess",
+      "result_hash": "3434343434343434343434343434343434343434343434343434343434343434",
+      "fallback": false,
+      "recommendation": "QUALIFY",
+      "evidence": {
+        "kind": "passbook-run-record",
+        "run_record_sha256": "5656565656565656565656565656565656565656565656565656565656565656"
+      }
+    },
+    "consent_hash": "1212121212121212121212121212121212121212121212121212121212121212",
+    "ladder_step": 0,
+    "signatures": {}
+  },
+  "waiting": {
+    "waiting": "confirm",
+    "stop": "accept",
+    "loan_id": "fa344e428b2a7cc2311136566552d6b7740a87a02fdc655d9482a72b434cfd08",
+    "lender_pk": "5072d8b50909c1b949bdcdf02d48e101d6b5fe00f339db19d535c37db2b14217",
+    "principal": 600000000,
+    "fee": 5920000,
+    "collateral_sats": 1211840,
+    "maturity_height": 530,
+    "grace_blocks": 5,
+    "price_cents": 10000000,
+    "refund_blocks": 10,
+    "cost_lines": [
+      "You repay 605.92 USDT by day 30. No other fees.",
+      "If BTC falls and the loan is liquidated early, the lender still receives the full term's interest; on this 30-day loan that is 5.92 USDT, about 0.99% of the amount borrowed."
+    ],
+    "termsheet": {
+      "hash": "fa344e428b2a7cc2311136566552d6b7740a87a02fdc655d9482a72b434cfd08",
+      "render": {
+        "title": "Borrow 600.00 USDT against 0.01211840 BTC",
+        "lines": [
+          "You receive 600.00 USDT (test USDT on regtest).",
+          "You repay 605.92 USDT by day 30. No other fees.",
+          "If BTC falls and the loan is liquidated early, the lender still receives the full term's interest; on this 30-day loan that is 5.92 USDT, about 0.99% of the amount borrowed.",
+          "Term: 30 blocks, until block 530 (1 block per day). Interest 5.92 USDT at 12.00% APR, ACT/365.",
+          "Collateral: 0.01211840 BTC locked in a Taproot escrow at 50.00% loan-to-value (BTC at $100,000)."
+        ],
+        "if_price_falls": [
+          "If BTC falls to $71,429 (70.00% LTV), a margin call gives you 10 blocks to add collateral or repay.",
+          "At $62,500 (80.00% LTV) after the cure window, the lender and the platform can liquidate: the lender takes exactly what is owed (605.92 USDT) in bitcoin at the oracle price and the rest returns to the borrower. No penalty; the only cost is the mining fee."
+        ],
+        "if_not_repaid": [
+          "After block 530 plus 5 blocks of grace, an unpaid loan defaults and the lender can claim the collateral with the platform.",
+          "If nobody acts, the borrower can recover the collateral alone from block 555."
+        ],
+        "settlement": "Repayment: over RGB, then the lender co-signs the release. If the lender refuses, the platform can co-sign instead.",
+        "scorer": "Credit check: in-process, dev-inprocess trust, recommendation QUALIFY. Evidence: sandbox run record 565656565656…, bound to this loan on Bitcoin. No hardware attestation.",
+        "final": "Approving signs this exact term sheet. Once the collateral is locked, this can’t be undone."
+      }
+    },
+    "explanation": "If you do not repay by the due block plus grace, the lender takes what is owed in bitcoin and the rest comes back to you.",
+    "lender_sats_on_default": 605920,
+    "borrower_sats_on_default": 605420
+  },
+  "request": {
+    "stop": "accept",
+    "accept": true,
+    "loan_id": "fa344e428b2a7cc2311136566552d6b7740a87a02fdc655d9482a72b434cfd08"
+  },
+  "approved_at": 1760700000,
+  "approval_payload": {
+    "v": 1,
+    "domain": "passbook-approval-v1",
+    "termsheet_hash": "fa344e428b2a7cc2311136566552d6b7740a87a02fdc655d9482a72b434cfd08",
+    "approver_pk": "716618470adbc26411832d52a0d66a5cc1991cae761b3b217848a0d7f0a9c8e7",
+    "role": "borrower",
+    "approved_at": 1760700000
+  },
+  "approval_payload_hash": "928b186b7a6f3d555a335fab5f846a414e433111b26920c9b2d1e26573e7ee6b"
+}

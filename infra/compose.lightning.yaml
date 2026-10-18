@@ -1,0 +1,20 @@
+# Optional real RGB Lightning nodes. Start with infra/lightning.sh start.
+# Uses the SAME isolated bitcoind/electrs/proxy network as infra/compose.yaml.
+services:
+  passbook-rln-payer:
+    image: ${PASSBOOK_RLN_IMAGE:-passbook-rln:d4762ac}
+    command: ["/RLNdata", "--daemon-listening-port", "3001", "--ldk-peer-listening-port", "9735", "--network", "regtest", "--disable-authentication"]
+    ports: ["127.0.0.1:${PASSBOOK_RLN_PAYER_PORT:-3101}:3001"]
+    volumes: [rln-payer:/RLNdata]
+    networks: [chain]
+  passbook-rln-payee:
+    image: ${PASSBOOK_RLN_IMAGE:-passbook-rln:d4762ac}
+    command: ["/RLNdata", "--daemon-listening-port", "3001", "--ldk-peer-listening-port", "9735", "--network", "regtest", "--disable-authentication"]
+    ports: ["127.0.0.1:${PASSBOOK_RLN_PAYEE_PORT:-3102}:3001"]
+    volumes: [rln-payee:/RLNdata]
+    networks: [chain]
+volumes:
+  rln-payer:
+    name: "${COMPOSE_PROJECT_NAME:-passbook}_rln-payer${PASSBOOK_RLN_VOLUME_SUFFIX:-}"
+  rln-payee:
+    name: "${COMPOSE_PROJECT_NAME:-passbook}_rln-payee${PASSBOOK_RLN_VOLUME_SUFFIX:-}"

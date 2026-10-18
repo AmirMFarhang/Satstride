@@ -1,0 +1,41 @@
+{
+  "name": "passbook-android",
+  "version": "0.1.0",
+  "private": true,
+  "license": "Apache-2.0",
+  "description": "Satstride thin client for Android: a UI paired to the borrower's Satstride node over the signed API. Sideloaded for the demo; never published.",
+  "main": "index.ts",
+  "scripts": {
+    "start": "expo start --dev-client",
+    "android": "expo run:android",
+    "prebuild": "expo prebuild --platform android",
+    "typecheck": "tsc --noEmit",
+    "test": "jest",
+    "check": "npm run typecheck && npm test",
+    "keystore": "bash scripts/make-keystore.sh",
+    "apk": "bash scripts/build-apk.sh"
+  },
+  "dependencies": {
+    "@noble/curves": "^2.4.0",
+    "@noble/hashes": "^2.4.0",
+    "expo": "~58.0.14",
+    "expo-camera": "~58.0.10",
+    "expo-crypto": "~58.0.7",
+    "expo-local-authentication": "~58.0.2",
+    "expo-secure-store": "~58.0.2",
+    "expo-status-bar": "~58.0.3",
+    "react": "19.3.0",
+    "react-native": "0.88.0",
+    "react-native-safe-area-context": "~5.10.1"
+  },
+  "devDependencies": {
+    "@testing-library/react-native": "^14.1.0",
+    "@types/jest": "^30.0.0",
+    "@types/react": "~19.3.0",
+    "babel-preset-expo": "~58.0.17",
+    "jest": "^30.5.2",
+    "jest-expo": "~58.0.11",
+    "test-renderer": "^1.3.1",
+    "typescript": "~5.9.3"
+  }
+}

@@ -1,0 +1,8 @@
+# Provider services come from compose.yaml: Bitcoin, indexer, RGB proxy and Nostr.
+# Keep retired payment-node volumes outside this definition; never delete historical state.
+services: {}
+networks:
+  chain:
+    ipam:
+      config:
+        - subnet: ${PASSBOOK_SP_SUBNET:-10.231.63.0/24}

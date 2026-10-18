@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "product": "Satstride",
+  "network_scope": "regtest and Mutinynet test assets",
+  "artifacts": [
+    {
+      "file": "satstride-wallet-0.9.10-arm64.apk",
+      "type": "android-apk",
+      "version": "0.9.10",
+      "version_code": 19,
+      "application_id": "dev.passbook.wallet",
+      "architecture": "arm64-v8a",
+      "source_commit": "38164c6870c47872a3d76998d070c10a35fe80ea",
+      "sha256": "53532c460ed203fb719d0f51e5b7e6dd67e56f714070a58b35aff9a40382902a",
+      "bytes": 196807811,
+      "delivery": "Locally built demonstration APK; compiled binaries excluded from the Git repository",
+      "build_command": "cd apps/mobile && npm run apk",
+      "build_result": "Signed ARM64 release build completed successfully"
+    },
+    {
+      "file": "satstride-wallet-0.9.9-arm64.apk",
+      "type": "android-apk",
+      "version": "0.9.9",
+      "version_code": 18,
+      "application_id": "dev.passbook.wallet",
+      "architecture": "arm64-v8a",
+      "source_commit": "dafd7d3ba6845763bbf8ee86f9a6c0c2d235cd93",
+      "sha256": "a58e409ef0844d672bcfd4ff9a7b3adb118c0cdba1299da1afc1140371a02385",
+      "bytes": 196806795,
+      "delivery": "Locally packaged demonstration APK; compiled binaries excluded from the Git repository"
+    }
+  ],
+  "screenshots": [
+    {
+      "file": "media/android-terms-0.9.9.png",
+      "sha256": "7ed7b20dfd7c17e585c8c8d920476d16d0dd7af36bf8e95ad542b3741ff22caa",
+      "capture": "Real Android Pixel 9 device screenshot",
+      "application_version": "0.9.9",
+      "source_commit": "dafd7d3ba6845763bbf8ee86f9a6c0c2d235cd93",
+      "data": "Seeded Mutinynet test persona and test assets",
+      "state": "Verified terms received, before owner collateral-lock approval",
+      "privacy": "No seeds, keys, addresses, operator credentials or device identifiers shown"
+    },
+    {
+      "file": "media/provider-live-desktop.png",
+      "sha256": "d595ef6ba01e491276f48ffc62bd9392c21b4bbc72ba90729d935098fd3c47fe",
+      "capture": "Live provider console overview",
+      "source_commit": "a2212bdade6fd087f5f31fa499f5e369e6b1289d",
+      "data": "Real operator-signed provider APIs through an isolated console preview; no fixture status data",
+      "runtime": "Existing provider; recent-feed compatibility mode shown explicitly",
+      "privacy": "Only session/actor/loan identifiers hidden in the browser before capture; statuses and data unchanged"
+    },
+    {
+      "file": "media/provider-live-workflow.png",
+      "sha256": "5391df23de4241bcbfc9b994d7e70c898563c22bdca7292bff46fa9adb86a6e3",
+      "capture": "Live provider workflow observations",
+      "source_commit": "a2212bdade6fd087f5f31fa499f5e369e6b1289d",
+      "data": "Real operator-signed provider APIs through an isolated console preview; no fixture status data",
+      "runtime": "Existing provider; recent-feed compatibility mode shown explicitly",
+      "privacy": "Only session/actor/loan identifiers hidden in the browser before capture; statuses and data unchanged"
+    },
+    {
+      "file": "media/provider-live-phone.png",
+      "sha256": "84b33cc66362e76cd21020c97f52ddb61a0923837645c7df2d59a3321b367f84",
+      "capture": "Responsive provider console",
+      "source_commit": "a2212bdade6fd087f5f31fa499f5e369e6b1289d",
+      "data": "Real operator-signed provider APIs through an isolated console preview; no fixture status data",
+      "runtime": "Existing provider; recent-feed compatibility mode shown explicitly",
+      "privacy": "Only session/actor/loan identifiers hidden in the browser before capture; statuses and data unchanged"
+    }
+  ]
+}

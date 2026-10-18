@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Satstride wallet</title>
+  <link rel="stylesheet" href="/wallet.css">
+</head>
+<body>
+  <div id="wallet" class="wallet" aria-live="polite"><p class="w-muted">Loading…</p></div>
+  <script type="module">
+    import { mountWallet } from '/wallet.js'
+    mountWallet(document.getElementById('wallet'))
+  </script>
+</body>
+</html>

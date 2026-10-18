@@ -1,0 +1,75 @@
+{
+  "expo": {
+    "name": "Passbook Wallet",
+    "slug": "passbook-mobile",
+    "version": "0.9.10",
+    "description": "The Passbook wallet on the phone: borrow against your bitcoin, or lend. Regtest build: test coins only, sideloaded, never published.",
+    "scheme": "passbookwallet",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "platforms": [
+      "android"
+    ],
+    "android": {
+      "package": "dev.passbook.wallet",
+      "versionCode": 19,
+      "allowBackup": false,
+      "permissions": [
+        "android.permission.USE_BIOMETRIC"
+      ],
+      "blockedPermissions": [
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.SYSTEM_ALERT_WINDOW"
+      ],
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/brand/adaptive-foreground.png",
+        "backgroundImage": "./assets/brand/adaptive-background.png",
+        "backgroundColor": "#1E6B52",
+        "monochromeImage": "./assets/brand/adaptive-monochrome.png"
+      },
+      "splash": {
+        "image": "./assets/brand/splash.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#1E6B52"
+      }
+    },
+    "plugins": [
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "minSdkVersion": 29,
+            "compileSdkVersion": 36,
+            "targetSdkVersion": 36,
+            "buildToolsVersion": "36.0.0"
+          }
+        }
+      ],
+      [
+        "expo-local-authentication",
+        {
+          "faceIDPermission": "Passbook asks for your phone's lock before it opens the wallet, shows your words or signs."
+        }
+      ],
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "node_modules/@expo-google-fonts/ibm-plex-sans/400Regular/IBMPlexSans_400Regular.ttf",
+            "node_modules/@expo-google-fonts/ibm-plex-sans/500Medium/IBMPlexSans_500Medium.ttf",
+            "node_modules/@expo-google-fonts/ibm-plex-sans/600SemiBold/IBMPlexSans_600SemiBold.ttf",
+            "node_modules/@expo-google-fonts/ibm-plex-sans/700Bold/IBMPlexSans_700Bold.ttf",
+            "node_modules/@expo-google-fonts/ibm-plex-mono/400Regular/IBMPlexMono_400Regular.ttf"
+          ]
+        }
+      ],
+      "./plugins/with-loopback-cleartext",
+      "./plugins/with-release-signing",
+      "./plugins/with-release-no-minify"
+    ],
+    "icon": "./assets/brand/icon.png"
+  }
+}

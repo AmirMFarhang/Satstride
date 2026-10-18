@@ -1,0 +1,48 @@
+Satstride
+
+Copyright 2026 the Satstride authors and contributors.
+The authors' code in this snapshot is licensed under Apache License 2.0;
+see LICENSE. The separate third-party terms below continue to apply.
+
+Project contact: Amir mohammad farhang (AmirMFarhang).
+Internal package and protocol identifiers are retained where required for
+compatibility.
+
+Third-party design references
+
+The local investigation design was informed by Compex Fraud Desk (Apache-2.0),
+including evidence-ID grounding, coded decisions, bounded retry budgets, cautious
+policy, a written playbook and offline replay.
+https://github.com/CompexTo/fraud-desk/tree/1129a15bfee7476d8d109f9437595f95edb25615
+
+Tazama (Apache-2.0) informed the rule / weighted-typology / threshold architecture.
+https://github.com/tazama-lf/docs
+
+IBM AMLSim (Apache-2.0) informed cycle, fan-in and gather/scatter vocabulary.
+https://github.com/IBM/AMLSim
+
+These projects are external references; their separate results are not Satstride
+measurements. Compex Credit Desk and the Compex platform are separate projects.
+Their source is not copied into this snapshot.
+
+Vendored and distributed materials
+
+src/server/vendor/toqr.js contains the unmodified toqr 0.1.1 encoder. Its MIT
+copyright and permission notice (Phil Pluckthun and 650 Industries / Expo) are
+retained in the source file.
+
+apps/console/fonts contains IBM Plex fonts under the SIL Open Font License 1.1.
+The complete copyright and license notice is apps/console/fonts/LICENSE.txt.
+Android font packages carry their own MIT / OFL notices.
+
+infra/sanctions/manifest.json records dataset provenance and terms. OFAC data is
+a U.S. government work. The included OpenSanctions-derived dataset is under
+CC BY-NC 4.0; that dataset retains its separate terms. A source-code license does
+not relicense this dataset. Original source URLs, date and hashes remain in the
+manifest.
+
+Tether WDK, UTEXO RGB modules, React Native, Expo, QVAC and other dependencies
+retain their respective licenses. Package manifests, lockfiles and native fetch
+scripts identify the versions used. Model weights, operator credentials,
+wallets, seeds, databases and local runtime artifacts are not part of the source
+snapshot.

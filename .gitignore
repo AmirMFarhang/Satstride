@@ -1,0 +1,53 @@
+node_modules/
+dist/
+*.log
+*.sqlite
+*.sqlite-journal
+*.sqlite-wal
+*.sqlite-shm
+*.db
+data/
+infra/state.json
+infra/wallets/
+.env
+.DS_Store
+scratch/
+.node/
+.claude/launch.json
+agent.md
+
+infra/rehearsal*/
+
+/infra/showcase/
+
+# operator-provided Compex verifier, keys and API token
+infra/compex/
+
+# This release has one maintained product README. Historical/session Markdown
+# stays out of the public snapshot; allow future maintained docs deliberately.
+*.md
+!/README.md
+!**/LICENSE.md
+!**/NOTICE.md
+!**/COPYING.md
+/docs/
+/AGENTS.md
+/SESSION-COORDINATION.md
+/.claude/
+/.worktrees/
+/.codex/
+/claude-ins/
+/scratch/
+*.jks
+*.keystore
+keystore.properties
+*.pem
+*.key
+*.apk
+*.aab
+*.mp4
+*.gguf
+# Screenshots are reviewed and published only through the curated media folder.
+/apps/console/screenshots/
+/apps/mobile/captures/
+/apps/mobile/assets/brand/preview/

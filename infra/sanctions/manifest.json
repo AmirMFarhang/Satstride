@@ -1,0 +1,38 @@
+{
+  "v": 1,
+  "kind": "passbook-sanctions-snapshot-manifest",
+  "note": "Offline snapshots, read by src/compliance/sanctions.ts. Each file is pinned by its SHA-256; a file that does not match is refused. Refreshing a snapshot is a reviewed commit (new file, new hash, new date), never an automatic download. Mainnet Bitcoin addresses only; the regtest demo never matches them unless a test list is added.",
+  "lists": [
+    {
+      "list_id": "ofac-sdn-xbt",
+      "title": "OFAC SDN list: digital currency addresses, XBT (Bitcoin)",
+      "file": "ofac-sdn-xbt-20261001.txt",
+      "format": "lines",
+      "sha256": "a72d4f30fb2c30294c0040bd2a338efc3a5ed4c3679ab30057a90c6a8a48abc6",
+      "entries": 532,
+      "authority": "U.S. Treasury, Office of Foreign Assets Control (OFAC), Specially Designated Nationals list (sdn_advanced.xml)",
+      "source": "0xB10C/ofac-sanctioned-digital-currency-addresses, branch lists, lists/sanctioned_addresses_XBT.txt (extracted nightly from OFAC's sdn_advanced.xml)",
+      "source_url": "https://raw.githubusercontent.com/0xB10C/ofac-sanctioned-digital-currency-addresses/lists/sanctioned_addresses_XBT.txt",
+      "source_commit": "6ae2472c439b9bb2788f8df662052ae31854aa97",
+      "as_of": "2026-10-01",
+      "retrieved_at": "2026-10-17",
+      "licence": "OFAC data: U.S. government work. Extraction tool: MIT (0xB10C). Names and programs are not in this file; look them up in the SDN list by address.",
+      "caveat": "A mirror of OFAC's list, not OFAC itself. Confirm against treasury.gov before relying on it in production."
+    },
+    {
+      "list_id": "opensanctions-il_mod_crypto-btc",
+      "title": "OpenSanctions il_mod_crypto (Israel NBCTF seized/sanctioned crypto wallets): Bitcoin-address wallets",
+      "file": "opensanctions-il_mod_crypto-btc-20261017180205.tsv",
+      "format": "tsv: address, opensanctions entity id, holder name, currency, topics",
+      "sha256": "0ddc4815af79ce3e16fefe968dba620100e82f0e68303c16e1a017afa8ebfbcc",
+      "entries": 52,
+      "authority": "Israel Ministry of Defense, National Bureau for Counter Terror Financing (NBCTF), as published by OpenSanctions",
+      "source": "OpenSanctions dataset il_mod_crypto version 20261017180205-ljh, entities.ftm.json (sha256 7d02319e383e69679bcf24d959d79f89eeed94a2bec1853fef63ccfd435beca4): every CryptoWallet whose currency is BTC or whose key is a Bitcoin address (some are Omni USDT on Bitcoin)",
+      "source_url": "https://data.opensanctions.org/artifacts/il_mod_crypto/20261017180205-ljh/entities.ftm.json",
+      "as_of": "2026-10-17",
+      "retrieved_at": "2026-10-17",
+      "licence": "OpenSanctions data is CC BY-NC 4.0: free for non-commercial use (this hackathon demo); a commercial deployment needs an OpenSanctions data licence. To confirm with counsel.",
+      "caveat": "One OpenSanctions dataset, not the whole sanctions collection (307,454 entities, 77-460 MB exports), which a deployment would load from its own licensed copy."
+    }
+  ]
+}

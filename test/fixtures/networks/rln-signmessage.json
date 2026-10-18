@@ -1,0 +1,23 @@
+{
+  "source": "RGB Lightning Node passbook-rln:d4762ac (rgb-lightning-node d4762ac3d1b3ca83f2f7b4f894e8569109dc572a), regtest node in the passbook-layers stack, recorded 2026-10-17",
+  "finding": "POST /signmessage signs message.as_bytes()[message.len()..], an empty slice (src/routes.rs sign_message): the same signature comes back for every message, so it cannot prove control of a challenge. POST /lninvoice with the challenge as description is signed by the node key over that description.",
+  "node_pubkey": "02faa63225280e3c244791252eb1e4b8c99b253316dc70bb2cb7e7c867af1968a1",
+  "challenge": {
+    "v": 1,
+    "kind": "passbook-layer-challenge",
+    "layer": "lightning",
+    "chain": "regtest",
+    "subject": "02faa63225280e3c244791252eb1e4b8c99b253316dc70bb2cb7e7c867af1968a1",
+    "negotiation_id": "abababababababababababababababababababababababababababababababab",
+    "lender_pk": "cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd",
+    "nonce": "dbd9e10ea405f47237d3884baeceaa64",
+    "issued_at": 1792262461,
+    "expires_at": 1792269661,
+    "text": "Passbook proof of control. Layer lightning on regtest, subject 02faa63225280e3c244791252eb1e4b8c99b253316dc70bb2cb7e7c867af1968a1. Negotiation abababababababababababababababababababababababababababababababab. Lender cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd. Nonce dbd9e10ea405f47237d3884baeceaa64. Expires 2026-10-17T20:41:01Z. This is not a transaction and moves no funds."
+  },
+  "signmessage": {
+    "message": "Passbook proof of control. Layer lightning on regtest, subject 02faa63225280e3c244791252eb1e4b8c99b253316dc70bb2cb7e7c867af1968a1. Negotiation abababababababababababababababababababababababababababababababab. Lender cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd. Nonce dbd9e10ea405f47237d3884baeceaa64. Expires 2026-10-17T20:41:01Z. This is not a transaction and moves no funds.",
+    "signed_message": "rykoe8thbaejiqh6rgexc6fwmdhy33urnzz7nrbqwjccmr8ipfo6gbknjqqwtx6gup6erh84e6qjzfdf8ujp8wkm3byaf5jdt7bcqwtn"
+  },
+  "invoice_proof": "lnbcrt1p4d8sf7dnu2pshxumzdahkkgrswfhk7e3qdanzqcm0de68ymmv9csycctev4ezqmrfva58gmnfdenjqmmwypex2em5v4ehgtpqwd6ky6n9vd6zqvpjveskzd3nxger2v3cxpjnxcejxs6rwwf3xg6nyetzx9jngc3cvvunjc3jx5enxvfkv33nwvrzvgexxc3hv5mkxwpkxaskvvfexcuxzvfwyp8x2em0w35kzarfdahzqctzv93xzcnpvfskyctzv93xzcnpvfskyctzv93xzcnpvfskyctzv93xzcnpvfskyctzv93xzcnpvfskyctzv93xzcnpvfskyctzv93zugzvv4hxgetjyp3kgcmyvdjxxerrv33kgcmyvdjxxerrv33kgcmyvdjxxerrv33kgcmyvdjxxerrv33kgcmyvdjxxerrv33kgcmyvdjxxerrv33kgcmy9csyummwvdjjqerzvsuk2vfsv4sngvp4vc6rwv3nxajrxwpcx33xzetrv4skzd359csy27rsd9ex2ueqxgcryd3dxycz6vfh2serqw35xyarqv269cs9g6rfwvsxjueqdehhggrpyp68yctwwdskxarfdahzqctwvssx6mmkv4ejqmn0ypn82mnywvhqnp4qta2vv399q8rcfz8jyjjav0yhryekffnzmw8pwevklnusea0r952zpp559na0wy93qnqmpsr5u00y5p889awqjapjkuqan4vexnjwdf3sttqsp5ur0rfw3zgdf7gnk7any7y8aw7cass5ycqztumzuc6zjznq900a4q9qyysgqcqzp2xqzjc47tpmr8a6r66wgjprr7kjrkfzd7kfrrhpnm2qvyp405pyhrfnhsxfcudkpyhkepmwd6cfl2wjjfupcgndar5vmc2zwpnl60thcz64eqqxg0y4q"
+}

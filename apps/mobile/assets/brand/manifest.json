@@ -1,0 +1,36 @@
+{
+  "mark": "sealed",
+  "generated_by": "assets/brand/generate.ts",
+  "files": {
+    "icon.png": {
+      "px": 1024,
+      "svg_sha256": "0fa1191cd273dc4e838cd63ed0f0993cc316ef563950b62e665f054536ae9473",
+      "use": "expo.icon: the legacy square icon (green, white mark)"
+    },
+    "adaptive-foreground.png": {
+      "px": 1024,
+      "svg_sha256": "0f24e437ffd642b57db9d256eec38b693f5ad8978cad6aa35fbcf1631c61cc85",
+      "use": "android.adaptiveIcon.foregroundImage: the white mark inside the safe circle, transparent"
+    },
+    "adaptive-background.png": {
+      "px": 1024,
+      "svg_sha256": "fd5e85c098dcdcb0fc5a1e9ff92c31628ba3ebd62dd9a323a210e4a0d3b19bfa",
+      "use": "android.adaptiveIcon.backgroundImage: the canvas green"
+    },
+    "adaptive-monochrome.png": {
+      "px": 1024,
+      "svg_sha256": "17e101f77485fea4da5c9cb9aa2da980fc786898d028da91ead51c34dbbdbaa7",
+      "use": "android.adaptiveIcon.monochromeImage: Android 13 themed icons (alpha only)"
+    },
+    "splash.png": {
+      "px": 1024,
+      "svg_sha256": "0f24e437ffd642b57db9d256eec38b693f5ad8978cad6aa35fbcf1631c61cc85",
+      "use": "android.splash.image on backgroundColor #1E6B52: the white mark, circle-safe"
+    },
+    "logo-colour.png": {
+      "px": 1024,
+      "svg_sha256": "9a53e591f2f12493cce04a62a905f4d7eab8a391a83a78e2f2404f85acf32b61",
+      "use": "docs and the PR: the colour mark, transparent"
+    }
+  }
+}

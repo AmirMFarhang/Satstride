@@ -1,0 +1,8 @@
+{
+  "name": "passbook-worklet",
+  "version": "0.1.0",
+  "private": true,
+  "description": "The Passbook module inside the WDK Bare worklet: the borrower's RGB wallet and signer, built from the wallet seed. Its dependencies (@scure/bip32, @scure/btc-signer, @scure/base, @utexo/rgb-lib-bare) are the app's own, resolved from apps/mobile/node_modules.",
+  "main": "index.js",
+  "license": "Apache-2.0"
+}
