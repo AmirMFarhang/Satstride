@@ -28,6 +28,27 @@
   "scope": [
     "Live QVAC selected grounded help sentences or operator facts; answers are intentionally bounded to verified context.",
     "These probes caused no wallet, loan, credit-check, billing, transfer or service-restart action.",
-    "This verifies both provider inference paths; the Android navigation entry point is being repaired separately."
-  ]
+    "These initial service probes verify both provider inference paths; the subsequent Android device observation below verifies the shipped entry point."
+  ],
+  "android_device_smoke": {
+    "observed_at": "2026-10-18T10:41:56.611632+00:00",
+    "application": "PassBook",
+    "version": "0.9.11",
+    "version_code": 20,
+    "artifact_sha256": "409ef3681220b648915efbfba3730fa74168e64ca4bf77545e4e63c599e5c63b",
+    "installation": "In-place upgrade on both connected Android phones; wallet data retained",
+    "device_observed": "Physical Pixel 9, unlocked by its owner",
+    "entry_point": "Ask the agent on call",
+    "observed_questions": [
+      "How do I repay?",
+      "What does this app do?"
+    ],
+    "answer_source_labels": [
+      "MODEL",
+      "MODEL"
+    ],
+    "model_label": "QVAC qwen3-1.7b on the provider",
+    "financial_actions": 0,
+    "evidence_scope": "Direct inspection of the actual Android accessibility tree; device identifiers and private captures omitted"
+  }
 }
