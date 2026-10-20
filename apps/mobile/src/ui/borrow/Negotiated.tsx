@@ -1,5 +1,6 @@
+import { hashObject } from '../../../../../src/core/crypto.js'
 // The negotiated path's screens: the agent's negotiation as it happens (every signed message),
-// no deal and failure, the check node, the consent, the Compex contract approval and the
+// no deal and failure, the check node, the consent, the signed local result and the
 // verified result. Each one shows what the flow is waiting on; nothing is shared, approved or
 // paid without a stop.
 import React, { useEffect, useState } from 'react'
@@ -22,9 +23,9 @@ import { C, F, t } from '../theme'
 import { partyName, pctText, short, usdNum } from '../format'
 
 /** The flow's stage as D1's check picture (src/motion/check-model.ts). */
-const CHECK_PHASE: Partial<Record<BorrowState['stage'], CheckPhase>> = { consent: 'sealing', 'check-sealing': 'out', 'compex-approval': 'approval', 'check-opening': 'running', 'check-result': 'opened', 'check-refused': 'refused' }
+const CHECK_PHASE: Partial<Record<BorrowState['stage'], CheckPhase>> = { consent: 'sealing', 'check-sealing': 'out', 'check-opening': 'running', 'check-result': 'opened', 'check-refused': 'refused' }
 
-export const NEGOTIATED_STAGES = new Set<BorrowState['stage']>(['negotiating', 'no-deal', 'negotiation-failed', 'check-node', 'consent', 'check-sealing', 'compex-approval', 'check-opening', 'check-result', 'check-refused', 'no-terms'])
+export const NEGOTIATED_STAGES = new Set<BorrowState['stage']>(['negotiating', 'no-deal', 'negotiation-failed', 'check-node', 'consent', 'check-sealing', 'check-opening', 'check-result', 'check-refused', 'no-terms'])
 
 const position = (b: Record<string, unknown>): Position | null => (b.position && typeof b.position === 'object' ? b.position as Position : null)
 
@@ -128,30 +129,15 @@ export function NegotiatedStage({ f }: { f: BorrowState }) {
   if (f.stage === 'check-node') return <CheckNodePick f={f} lender={lender} />
   if (f.stage === 'consent' || f.stage === 'check-sealing') return <Consent f={f} lender={lender} />
 
-  if (f.stage === 'compex-approval' || f.stage === 'check-opening') {
-    const c = f.approval?.contract
-    const opening = f.stage === 'check-opening'
-    return (
-      <Screen top={<FlowTop title="Approve the check" onBack={back} right={<StopCount n={1} />} />} bottom={opening ? undefined : <>
-        <Button label="Approve with your lock" busy={!!f.working} disabled={!c} onPress={() => void s.borrow.approveCompex()} />
-        <Undo text="Your sealed history is opened only by this contract" />
-      </>}>
-        <Text style={[t.h2, { fontSize: 24, lineHeight: 30 }]}>Let Compex run this check on your sealed history?</Text>
-        <CheckVisualizer phase={CHECK_PHASE[f.stage] ?? 'approval'} operatorLabel={`Check node ${short(f.checkNode?.offer.operator_pk ?? '', 3)}`} />
-        <Rows topLine>
-          <Row k="Contract" v={c?.contractId ?? '…'} mono />
-          <Row k="Version" v={c ? String(c.contractVersion) : '…'} />
-          <Row k="Contract hash" v={c ? short(c.contractHash, 8) : '…'} mono />
-          <Row k="Check node" v={f.checkNode ? short(f.checkNode.offer.operator_pk, 6) : '…'} mono />
-          <Row k="Paid by" v={lender} />
-        </Rows>
-        <P small>The check node signed this contract and your phone checked it matches the agreed loan before showing it. The result comes back only for {lender} and you; Compex keeps nothing.</P>
-        {opening ? <Steps3 /> : null}
-        <Working label={f.working} />
-        <Problem>{f.error}</Problem>
-      </Screen>
-    )
-  }
+  if (f.stage === 'check-opening') return (
+    <Screen top={<FlowTop title="Checking your history" onBack={back} right={<StopCount n={1} />} />}>
+      <Text style={[t.h2, { fontSize: 24, lineHeight: 30 }]}>The local scorer is checking your sealed history</Text>
+      <CheckVisualizer phase="running" operatorLabel={`Check node ${short(f.checkNode?.offer.operator_pk ?? '', 3)}`} />
+      <P small>This check uses the in-process scorer. Your phone checks the selected operator’s signed offer, any configured signer pins, and the result’s binding to this loan.</P>
+      <Working label={f.working} />
+      <Problem>{f.error}</Problem>
+    </Screen>
+  )
 
   if (f.stage === 'check-result' && f.checkView) {
     const v = f.checkView
@@ -164,7 +150,7 @@ export function NegotiatedStage({ f }: { f: BorrowState }) {
       return (
         <Screen top={<FlowTop title="Check result" onBack={back} />} bottom={<Button kind="secondary" label="Back to your passbook" onPress={leave} />}>
           <CheckVisualizer phase="opened" view={v} operatorLabel={`Check node ${short(v.operator_pk, 3)}`} />
-          <Hero label="Compex says" value={o.recommendation} sub={`income band ${o.income_band}`} size="mid" />
+          <Hero label="Local scorer says" value={o.recommendation} sub={`income band ${o.income_band}`} size="mid" />
           <PersonaLine />
           <Note tone="warn" icon="close" title={words.title} sub={words.detail} />
           {failedChecks.length ? (
@@ -172,12 +158,12 @@ export function NegotiatedStage({ f }: { f: BorrowState }) {
           ) : null}
           {o.findings.length ? <Disclosure label="What the check found">{o.findings.map((x, i) => <KV key={`${x.type}-${i}`} k={findingWords(x.type)} v={x.type} />)}</Disclosure> : null}
           <Disclosure label="The check">
-            <KV k="Compex run" v={v.execution_id ?? '…'} />
+            <KV k="Result reference" v={v.outcome ? short(hashObject(v.outcome), 8) : '…'} />
             <KV k="Release" v={short(v.release_hash, 8)} />
             <KV k="Check node" v={short(v.operator_pk, 6)} />
             <KV k="Paid by" v={v.rail_label ? `${lender} · ${v.rail_label}` : lender} />
           </Disclosure>
-          <P small>Verified on this phone: signed by a pinned Compex evidence key and bound to this loan. The result is the check's, not the lender's.</P>
+          <P small>Verified on this phone: signed by the scorer you selected and bound to this loan. The result is signed by the selected local scorer host.</P>
         </Screen>
       )
     }
@@ -187,12 +173,12 @@ export function NegotiatedStage({ f }: { f: BorrowState }) {
         <Undo text="Nothing is locked until you accept the terms" />
       </> : <Button kind="secondary" label="Back to your passbook" onPress={leave} />}>
         <CheckVisualizer phase="opened" view={v} operatorLabel={`Check node ${short(v.operator_pk, 3)}`} />
-        <Hero label="Compex says" value={o?.recommendation ?? 'no result'} sub={o ? `income band ${o.income_band}` : undefined} size="mid" />
+        <Hero label="Local scorer says" value={o?.recommendation ?? 'no result'} sub={o ? `income band ${o.income_band}` : undefined} size="mid" />
         <PersonaLine />
-        {v.ok ? <Note icon="check" title="Verified on this phone" sub="Signed by a pinned Compex evidence key and bound to this loan" /> : <Note tone="warn" icon="close" title="This result did not verify" sub="The phone will not use it. Nothing was locked." />}
+        {v.ok ? <Note icon="check" title="Verified on this phone" sub="Signed by the scorer you selected and bound to this loan" /> : <Note tone="warn" icon="close" title="This result did not verify" sub="The phone will not use it. Nothing was locked." />}
         <Rows>
           <Row k="Release" v={short(v.release_hash, 8)} mono />
-          <Row k="Run" v={v.execution_id ? short(v.execution_id, 8) : '…'} mono />
+          <Row k="Result reference" v={v.outcome ? short(hashObject(v.outcome), 8) : '…'} mono />
           <Row k="Check node" v={short(v.operator_pk, 6)} mono />
           <Row k="Paid by" v={v.key_source === ('operator-billed' as never) ? `${lender} · billed at close, not paid up front` : v.rail_label ? `${lender} · ${v.rail_label}` : lender} />
           <Row k="Binding" v={o?.v === 2 ? 'v2: this borrower, lender and loan' : 'not v2'} tone={o?.v === 2 ? 'green' : 'warn'} />
@@ -204,7 +190,7 @@ export function NegotiatedStage({ f }: { f: BorrowState }) {
               <Text style={[t.small, { flex: 1 }]}>{x.detail}</Text>
             </View>
           ))}
-          <P small>Compex's full claim verifier runs at the lender; the phone checks the signature, the binding and the opening.</P>
+          <P small>This local scorer has development assurance. The phone checks its signature, the loan binding and the opening.</P>
         </Disclosure>
         <Working label={f.working} />
         <Problem>{f.error}</Problem>
@@ -240,20 +226,12 @@ export function NegotiatedStage({ f }: { f: BorrowState }) {
   )
 }
 
-/** The chain checks and Compex findings, in words (codes from src/scorer/compex.ts). */
+/** The chain checks and scorer findings, in words (the generic scoring contract). */
 function checkWords(id: string): string {
-  return ({ anchor_confirmations: 'Bitcoin confirmations', history_reconciliation: 'History matches the observer', rgb_receive_validation: 'Payments received check out', affordability: 'Affordability', inflows: 'Income', headroom: 'Headroom', injection: 'Instructions hidden in memos' } as Record<string, string>)[id] ?? id
+  return ({ injection: 'Instructions hidden in memos', categorise: 'Income categories', affordability: 'Affordability', headroom: 'Headroom', inflows: 'Income', sybil: 'Transfers between your own wallets', disclosure: 'Disclosures', investigation: 'History investigation', reconcile: 'History reconciliation' } as Record<string, string>)[id] ?? id
 }
 function findingWords(code: string): string {
-  return ({ HISTORY_TOO_SHORT: 'History too short', CHAIN_CHECK_FAILED: 'A chain check failed', CHAIN_CHECKS_PASSED: 'Chain checks passed', INCOME_BELOW_REQUIREMENT: 'Income below what the lender asks', INCOME_MEETS_REQUIREMENT: 'Income meets the requirement', INCOME_RECURRING: 'Income is recurring', INCOME_VOLATILE: 'Income varies', INCOME_SIGNED_BY_PAYERS: 'Income signed by payers', LOAN_LIKE_INFLOWS: 'Inflows that look like loans', SELF_TRANSFERS_EXCLUDED: 'Your own transfers left out', AFFORDABILITY_OK: 'Affordable', AFFORDABILITY_SHORTFALL: 'Not affordable', INSTRUCTIONS_IN_MEMOS: 'Instructions found in memos' } as Record<string, string>)[code] ?? code.toLowerCase().replace(/_/g, ' ')
-}
-
-function Steps3() {
-  return (
-    <View style={{ gap: 6 }}>
-      <Text style={t.small}>The lender pays the check node on its own rail, Compex runs, and the result comes back here to be opened.</Text>
-    </View>
-  )
+  return ({ prefunded_inflow: 'A payment funded by an earlier outgoing transfer', circular_flow: 'Transfers move in a circle', income_is_loan: 'Income may be a loan', new_payer: 'New payer', irregular_genuine: 'Irregular income', injection_attempt: 'Instructions found in memos', fan_in_burst: 'A burst of incoming transfers', pass_through: 'Money passed through this wallet' } as Record<string, string>)[code] ?? code.replace(/_/g, ' ')
 }
 
 /** What the bundle declares as recurring outflows: only the borrower's own declaration, never a default. */
@@ -287,7 +265,7 @@ function CheckNodePick({ f, lender }: { f: BorrowState; lender: string }) {
               <Text style={[t.bodyMedium, { fontFamily: F.semibold }]}>Check node {r.offer.operator_pk.slice(0, 6)}</Text>
               {r.usable ? <Tag label={r.offer.release.provider.toUpperCase()} /> : <Tag label="NOT USABLE" tone="muted" />}
             </View>
-            <Text style={t.small}>Release {short(r.release_hash, 6)} · about {r.offer.p50_seconds} s · keeps nothing</Text>
+            <Text style={t.small}>Release {short(r.release_hash, 6)} · about {r.offer.p50_seconds} s · declares no retention</Text>
             {r.why ? <Text style={t.small}>{r.why}</Text> : null}
           </Pressable>
         )
@@ -320,7 +298,8 @@ function Consent({ f, lender }: { f: BorrowState; lender: string }) {
         <Row k="Release" v={`${node.offer.release.provider} · ${short(node.release_hash, 6)}`} mono />
         <Row k="Result goes to" v={lender} />
         <Row k="Paid by" v={lender} />
-        <Row k="Kept by the node" v="nothing" />
+        <Row k="Retention policy" v="none (operator declaration)" />
+        <Row k="Assurance" v="Local scorer; development assurance" />
       </Rows>
       <Disclosure label="Data shared" value={cats ? `${cats.length} kinds` : '…'} open>
         {(cats ?? []).map((c) => <KV key={c} k={c.replace(/_/g, ' ')} v="sealed" />)}

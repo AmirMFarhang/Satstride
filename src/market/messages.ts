@@ -66,9 +66,9 @@ export interface ApplicationPayload {
   /** The borrower's consent receipt for this credit check; its hash goes into the term sheet. */
   consent?: import('../scorer/consent.js').ConsentReceipt
   /**
-   * The deployment's scorer (scorer.provider compex): its evidence exactly as released, e.g. the
-   * Compex DSSE envelope, the released artifact and its opening. It replaces the sandbox result and
-   * attestation (both null then); the lender verifies it with its own compex-verify.
+   * The deployment's scorer (scorer.provider external): its evidence exactly as released, e.g. the
+   * external provider DSSE envelope, the released artifact and its opening. It replaces the sandbox result and
+   * attestation (both null then); the lender verifies it with its own external-verify.
    */
   scorer_outcome?: import('../scorer/types.js').ScorerOutcome
   /** With scorer_outcome: the chain observer's signed terms of the scored bundle (loan request, asset, offer, lender requirements). */

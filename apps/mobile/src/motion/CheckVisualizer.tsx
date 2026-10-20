@@ -1,7 +1,7 @@
 // The private credit check, as it happens: your data sealed in an envelope on the phone,
-// travelling over Nostr to the check node, waiting there for your approval of the Compex
+// travelling over Nostr to the check node, waiting there for your approval of the scorer
 // contract, the node running it while the lender pays, the result travelling back, and then
-// the checks this phone ran on it, one by one (BorrowerCheckView.ticks: the DSSE signature,
+// the checks this phone ran on it, one by one (BorrowerCheckView.ticks: the Result signature,
 // the released run, the v2 binding to this loan...) and the recommendation. The envelope's
 // place is the real stage; the ticks are the real ticks, in their order. With reduce motion
 // everything is in place at once.
@@ -104,7 +104,7 @@ export function CheckVisualizer({ phase, view, refusal, refusalText, operatorLab
 
       <View style={s.status}>
         {phase === 'approval' ? <Text style={[s.pill, { color: C.amber, backgroundColor: C.amberBg }]}>WAITING FOR YOU</Text> : null}
-        {phase === 'running' ? <Text style={[s.pill, { color: C.green, backgroundColor: C.greenBg }]}>COMPEX · QVAC · LENDER PAYS</Text> : null}
+        {phase === 'running' ? <Text style={[s.pill, { color: C.green, backgroundColor: C.greenBg }]}>LOCAL SCORER · LENDER PAYS</Text> : null}
         <Text style={[t.sub, { textAlign: 'center' }]}>{phaseWords(phase, operatorLabel)}</Text>
       </View>
 

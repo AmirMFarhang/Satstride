@@ -1,3 +1,4 @@
+import { hashObject } from '../../../../../src/core/crypto.js'
 // The lender's negotiated screens (lane E3), in the canvas's language: each negotiation's live
 // signed transcript and where its credit check stands, the term sheet waiting for the person
 // (one stop: these terms, and the payout once their bitcoin is locked), the check nodes that
@@ -108,10 +109,10 @@ export function LendNegotiation({ params }: { params: Record<string, unknown> })
       {k ? (
         <Disclosure label="What this phone checked">
           {k.ticks.map((x) => <KV key={x.id} k={`${x.ok ? '✓' : '✗'} ${x.id}`} v={x.detail} />)}
-          {k.not_run.length ? <P small>Not checked on this phone: {k.not_run.join(', ')}. Compex's full claim verifier runs on the provider.</P> : null}
+          {k.not_run.length ? <P small>Not checked on this phone: {k.not_run.join(', ')}.</P> : null}
           {k.refusals.length ? <P small>Not funded: {k.refusals.join('; ')}</P> : null}
           <P small>{k.rail_label}</P>
-          {k.execution_id ? <KV k="Compex run" v={k.execution_id} /> : null}
+          {k.execution_id ? <KV k="scorer run" v={k.execution_id} /> : null}
           <KV k="Key sent to them" v={<TxValue id={k.key_hash} />} />
           <KV k="Bill" v={<TxValue id={k.bill.bill_hash} />} />
         </Disclosure>
@@ -145,17 +146,16 @@ export function LendSheet({ params }: { params: Record<string, unknown> }) {
       <Hero label="You lend" value={usd(tm.principal)} sub={`to ${borrower} at ${pctText(p.sheet.apr_bps)} a year (negotiated) · they repay ${usd(debtOf(tm))} by block ${tm.maturity_height}`} />
       <Rows>
         <Row k="Their bitcoin locked" v={`${btc(tm.collateral_sats)} · ${pctText(tm.ltv_bps)}`} />
-        <Row k="Credit check" v={`${p.sheet.scorer.recommendation} · Compex`} tone="green" />
+        <Row k="Credit check" v={`${p.sheet.scorer.recommendation} · local scorer (development assurance)`} tone="green" />
         <Row k="Checks" v={`${passed} of ${p.checks.length} passed`} tone={passed === p.checks.length ? 'green' : 'warn'} />
         {bill ? <Row k={BILLED_LABEL} v={usd(bill.amount)} tone="muted" /> : null}
       </Rows>
       {bill ? <P small muted>{`The check node ran the check on credit. ${usd(bill.amount)} is added to the platform fee you pay over RGB when this loan closes. Nothing was paid up front.`}</P> : null}
       <Disclosure label="What am I agreeing to?">
         <P>{`You lend ${usd(tm.principal)} to ${borrower} once their ${NETWORK.btcUnit} is locked on Bitcoin. They repay ${usd(debtOf(tm))} by block ${tm.maturity_height}. If they do not, the locked bitcoin pays you after block ${tm.maturity_height + tm.grace_blocks}.`}</P>
-        <P small>The terms hash below is what their lock commits on chain; it binds the Compex evidence and their consent.</P>
+        <P small>The terms hash below is what their lock commits on chain; it binds the scorer evidence and their consent.</P>
         <KV k="Terms hash" v={<TxValue id={id} />} />
-        {ev?.kind === 'compex-dsse' ? <KV k="Compex evidence" v={<TxValue id={ev.envelope_sha256} />} /> : null}
-        {ev?.kind === 'compex-dsse' ? <KV k="Compex run" v={ev.execution_id} /> : null}
+        {ev ? <KV k="Evidence reference" v={<TxValue id={hashObject(ev)} />} /> : null}
         {p.checks.map((c) => <KV key={c.id} k={`${c.ok ? '✓' : '✗'} ${c.id}`} v={c.detail} />)}
       </Disclosure>
       <Working label={f.working[id] ?? null} />

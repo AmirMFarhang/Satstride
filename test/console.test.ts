@@ -45,12 +45,12 @@ describe('operator console (src/server/console.ts)', () => {
     checkNode = createServer((req, res) => {
       if (req.url !== '/status') retiredPaymentRequests++
       res.writeHead(200, { 'content-type': 'application/json' })
-      res.end(JSON.stringify({ name: 'provider', operator_pk: operator.pubkey, scorer_label: 'Compex governed scorer (test)', release: { provider: 'compex', image_digest: `sha256:${'a'.repeat(64)}`, scoring_contract_hash: 'b'.repeat(64), model_hash: null }, release_hash: 'c'.repeat(64), execution: { label: 'software evidence' }, price: { asset: 'rgb:test-usdt', amount: 500_000 }, payer_modes: ['lender'],
+      res.end(JSON.stringify({ name: 'provider', operator_pk: operator.pubkey, scorer_label: 'Local in-process scorer (test)', release: { provider: 'in-process', image_digest: `sha256:${'a'.repeat(64)}`, scoring_contract_hash: 'b'.repeat(64), model_hash: null }, release_hash: 'c'.repeat(64), execution: { label: 'software evidence' }, price: { asset: 'rgb:test-usdt', amount: 500_000 }, payer_modes: ['lender'],
         log: [{ negotiation_id: negotiation, status: 'billed', bill_hash: paymentHash, rail: 'bill-at-close', at: 1_760_760_010_000 }, { negotiation_id: randomHex(32), status: 'refused', reason: 'CONSENT', at: 1_760_760_020_000 }] }))
     })
     const checkPort = await listen(checkNode)
     const lenderPk = partyKeyFromSeed(lenderSeed).pubkey
-    writeFileSync(join(dir, 'provider.json'), JSON.stringify({ project: 'passbook-console-test', asset: { asset_id: 'rgb:test-usdt', ticker: 'USDT', note: 'regtest test USDT stand-in, not real USDT' }, lenders: [{ name: 'lender1', pubkey: lenderPk, status: 'running' }], check_nodes: [{ name: 'provider', operator_pk: operator.pubkey, status_url: `http://127.0.0.1:${checkPort}/status`, release_hash: 'c'.repeat(64), payer_modes: ['lender'], scorer_label: 'Compex governed scorer (test)', status: 'running' }], compex: { api_url: 'http://127.0.0.1:1', evidence_keys: [{ keyid: '9d137510e8ebd130', alg: 'Ed25519', public_key_hex: 'd'.repeat(64) }] } }))
+    writeFileSync(join(dir, 'provider.json'), JSON.stringify({ project: 'passbook-console-test', asset: { asset_id: 'rgb:test-usdt', ticker: 'USDT', note: 'regtest test USDT stand-in, not real USDT' }, lenders: [{ name: 'lender1', pubkey: lenderPk, status: 'running' }], check_nodes: [{ name: 'provider', operator_pk: operator.pubkey, status_url: `http://127.0.0.1:${checkPort}/status`, release_hash: 'c'.repeat(64), payer_modes: ['lender'], scorer_label: 'Local in-process scorer (test)', status: 'running' }] }))
     Object.assign(process.env, { PASSBOOK_SP_STATE: dir, PASSBOOK_WALLETS: wallets, PASSBOOK_SP_RLN_CHECK_URL: `http://127.0.0.1:${checkPort}` })
     const store = new Store()
     app = createApp({ platformKey, store, chain: new FakeChain(100), initialPriceCents: 10_000_000, blocksPerMonth: 30, relays: [], auth: { mode: 'enforce', operators: [platformKey.pubkey, operator.pubkey], localConsole: false, sessions: [session] } })
@@ -100,7 +100,8 @@ describe('operator console (src/server/console.ts)', () => {
     assert.equal(o.platform.pubkey, platformKey.pubkey)
     assert.equal(o.platform.api_auth, 'enforce')
     assert.equal(o.check_nodes[0].status, 'running')
-    assert.equal(o.compex.status, 'down', 'an unreachable Compex is shown as down, never as answering')
+    assert.equal(o.scorer.status, 'answering', 'status comes from the actual check-node response')
+    assert.equal(o.scorer.provider, 'in-process')
     assert.equal(o.assistant.status, 'not-running')
     assert.equal(o.counters.platform_fees_earned, 840_000)
     assert.equal(o.counters.check_fees_earned, 500_000)
@@ -152,8 +153,9 @@ describe('operator console (src/server/console.ts)', () => {
     assert.equal(lender.kill_switch.stopped, false)
     assert.equal(lender.log.verified, true)
     assert.equal(lender.log.anchor, 'gate key derived from the node key')
-    assert.deepEqual(s.compex.evidence_keys, [{ keyid: '9d137510e8ebd130', alg: 'Ed25519', development: false }])
-    assert.equal(s.compex.development_keys_refused, true)
+    assert.equal(s.scorer.provider, 'in-process')
+    assert.equal(s.scorer.trust_ceiling, 'dev-inprocess')
+    assert.match(s.scorer.verification, /local host/)
     // alter one entry's result: the chain breaks at that entry
     const file = join(wallets, 'lender1', 'governance', 'decision-log.jsonl')
     const original = readFileSync(file, 'utf8')

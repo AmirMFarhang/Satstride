@@ -5,9 +5,9 @@ import assert from 'node:assert/strict'
 import { describe, it } from 'node:test'
 import type { ChainClient } from '../src/chain/types.js'
 import { hashObject, keyPairFromLabel, signObject } from '../src/core/crypto.js'
-import { historyLedger } from '../src/sandbox/reconcile.js'
+import { reconcileHistory, historyLedger } from '../src/sandbox/reconcile.js'
 import type { Bundle } from '../src/sandbox/types.js'
-import { historyProofMaxAge, nodeUnspent, PUBLIC_NETWORK_PROOF_MAX_AGE_BLOCKS, runChainChecks } from '../src/scorer/chain-checks.js'
+import { historyProofMaxAge, nodeUnspent, PUBLIC_NETWORK_PROOF_MAX_AGE_BLOCKS } from '../src/chain/history-checks.js'
 
 const txid = 'ab'.repeat(32)
 const script = '5120' + 'cd'.repeat(32)
@@ -60,14 +60,13 @@ describe('runChainChecks on an Esplora chain with an observer-signed proof', () 
   // the proof signed at height 110; the chain's tip is 120 (10 blocks later, as on Mutinynet a few minutes on).
   const observer = keyPairFromLabel('chain-checks-observer')
   const borrower = keyPairFromLabel('chain-checks-borrower').pubkey
-  const signer = keyPairFromLabel('chain-checks-signer')
   const asset = 'rgb:test-asset'
   const inflow = { txid: 'ab'.repeat(32), height: 100, direction: 'in' as const, amount: 100_000_000, recipient_id: 'r', counterparty_pk: 'cd'.repeat(32) }
   const allocations = [{ txid: inflow.txid, vout: 1, amount: inflow.amount, bitcoin_sats: 1000, script }]
   const proof = signObject({ v: 1 as const, assurance: 'trusted_wallet_snapshot' as const, observer_pk: observer.pubkey, borrower_pk: borrower, asset_id: asset, wallet_xpubs_hash: 'ee'.repeat(32), observed_from_zero: true, first_transfer_txid: inflow.txid, opening_balance: 0, current_balance: inflow.amount, height: 110, transfers: [inflow], allocations, native_snapshot_hash: hashObject({ ledger: historyLedger([inflow]), balance: inflow.amount, allocations }), btc_history: { status: 'verified' } }, observer.secretKey)
   const bundle = { borrower_pk: borrower, offer_id: 'o', asset_id: asset, balance: inflow.amount, history: [{ txid: inflow.txid, height: 100, direction: 'in', amount: inflow.amount, counterparty_pk: inflow.counterparty_pk, memo: '' }], history_proof: proof } as unknown as Bundle
   const esplora = (spent: boolean) => ({ kind: 'esplora', getHeight: async () => 120, getTx: async () => ({ txid: inflow.txid, height: 100, inputs: [], outputs: [{ value: 1, script: '00' }, { value: 1000, script }] }), outspends: async () => [{ spent: false }, { spent }] }) as unknown as ChainClient
-  const reconciled = async (chain: ChainClient, maxAgeBlocks?: number) => (await runChainChecks(bundle, chain, signer, { trustedSigners: [observer.pubkey], lender_pk: 'aa'.repeat(32), purpose_id: 'p', ...(maxAgeBlocks === undefined ? {} : { maxAgeBlocks }) })).checks.find((c) => c.id === 'history_reconciliation')!.ok
+  const reconciled = async (chain: ChainClient, maxAgeBlocks?: number) => (await reconcileHistory(bundle, chain, { trustedSigners: [observer.pubkey], assetId: asset, currentHeight: await chain.getHeight(), getUnspent: nodeUnspent(chain), maxAgeBlocks: maxAgeBlocks ?? historyProofMaxAge(undefined, chain.kind) })).status === 'verified'
 
   it('refuses a proof 10 blocks old at window 0 (regtest behaviour)', async () => {
     assert.equal(await reconciled(esplora(false), 0), false)

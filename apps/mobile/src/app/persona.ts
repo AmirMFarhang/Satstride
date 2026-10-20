@@ -1,5 +1,5 @@
 // REGTEST TEST DATA ONLY: the seeded test persona (the user's option A for the M7 acceptance run).
-// A fresh phone wallet has no history the platform's trusted observer saw from zero, so its Compex
+// A fresh phone wallet has no history the platform's trusted observer saw from zero, so its scorer
 // check honestly comes back ESCALATE. For the acceptance run the person may switch this phone to a
 // persona the service provider seeded and observed from zero (Fatima or Walter): its words, an
 // rgb-lib backup of its wallet, the income records it was seeded with, and the observer's history

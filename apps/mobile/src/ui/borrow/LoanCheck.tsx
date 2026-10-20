@@ -1,3 +1,4 @@
+import { hashObject } from '../../../../../src/core/crypto.js'
 // Check a loan (open or closed) on this phone against Bitcoin and the signatures, and the receipt
 // of a closed loan: what was borrowed and paid, the bitcoin that came back, the step it earned,
 // the evidence it was underwritten on and who paid for the check. Every line comes from the
@@ -95,8 +96,7 @@ export function Receipt({ params }: { params: Record<string, unknown> }) {
       <Disclosure label="Underwritten on">
         {sheet ? <>
           <KV k="Check" v={`${sheet.scorer.provider}${sheet.scorer.fallback ? ' (fallback)' : ''} · ${sheet.scorer.recommendation}`} />
-          {e?.kind === 'compex-dsse' ? <KV k="Compex run" v={short(e.execution_id, 8)} /> : null}
-          {e ? <KV k="Evidence digest" v={short(e.kind === 'compex-dsse' ? e.envelope_sha256 : e.run_record_sha256, 8)} /> : null}
+          {e ? <KV k="Evidence reference" v={short(hashObject(e), 8)} /> : null}
           {sheet.scorer.check_receipt ? <KV k="Check node" v={short(sheet.scorer.check_receipt.operator_pk, 6)} /> : null}
           <KV k="Paid for by" v={partyName('Lender', l.lender_pk)} />
           <KV k="Lender approvals" v={String(l.lender_approvals?.length ?? 0)} />

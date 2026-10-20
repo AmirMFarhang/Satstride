@@ -54,7 +54,7 @@ export function liveWorkflows(activity, now = Date.now()) {
       stale: now - item.at > 5 * 60_000,
       stopped: report[3] === true,
       detail: report[1] === 'consent'
-        ? 'A consent approval was reported. Sharing and Compex approvals use the same note; the private check phase is unknown.'
+        ? 'A consent approval was reported. Sharing and scoring approvals use the same note; the private check phase is unknown.'
         : 'The agent reported this step. Current progress after this update is unknown.',
     })
   }
@@ -64,14 +64,14 @@ export function liveWorkflows(activity, now = Date.now()) {
 export function liveServices(overview) {
   if (!overview) return []
   const node = overview.check_nodes?.[0]
-  const model = overview.compex?.qvac
+  const model = overview.scorer?.qvac
   const assistant = overview.assistant
   const relays = overview.relays ?? []
   const connected = relays.filter(r => r.connected === true).length
   return [
     { id: 'platform', name: 'Platform', status: 'Online', tone: 'ok', detail: 'This signed platform snapshot answered.' },
     { id: 'check', name: 'Credit checks', status: node?.status === 'running' ? 'Online' : node ? 'Unavailable' : 'Not configured', tone: node?.status === 'running' ? 'ok' : 'warn', detail: node?.scorer_label ?? 'No check node is reported.' },
-    { id: 'compex', name: 'Compex', status: overview.compex?.status === 'answering' ? 'API answering' : 'Unavailable', tone: overview.compex?.status === 'answering' ? 'ok' : 'warn', detail: 'Governed credit-check execution.' },
+    { id: 'scorer', name: 'Scorer', status: overview.scorer?.status === 'answering' ? 'Answering' : 'Not observed', tone: overview.scorer?.status === 'answering' ? 'ok' : 'neutral', detail: overview.scorer?.scorer_label ?? 'The configured scorer has no current status report.' },
     { id: 'model', name: 'Local model', status: model?.status === 'ready' ? 'Ready' : model?.status === 'loading' ? 'Loading' : 'Unavailable', tone: model?.status === 'ready' ? 'ok' : 'warn', detail: model?.models?.map(m => m.id).join(', ') || 'No model status reported.' },
     { id: 'relays', name: 'Nostr relays', status: `${connected} / ${relays.length} connected`, tone: connected ? 'ok' : 'warn', detail: 'Connections observed by the platform.' },
     { id: 'assistant', name: 'Help agent', status: assistant?.status === 'running' ? 'Announced' : 'Not announced', tone: assistant?.status === 'running' ? 'ok' : 'neutral', detail: assistant?.status === 'running' ? 'Its signed relay announcement has not expired.' : 'No current relay announcement is visible.' },

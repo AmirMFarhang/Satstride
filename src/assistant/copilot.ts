@@ -89,7 +89,7 @@ export function findEntries(question: string, entries: LogEntry[]): LogEntry[] {
   if (/sanction/.test(q)) return latest((e) => e.kind === 'sanctions-result', 3)
   if (/kill|stopped|emergency/.test(q)) return latest((e) => e.kind === 'kill-switch', 2)
   if (/polic/.test(q)) return latest((e) => e.kind === 'policy-change', 3)
-  if (/scor|compex|check result/.test(q)) return latest((e) => e.kind === 'scorer-result', 3)
+  if (/scor|external|check result/.test(q)) return latest((e) => e.kind === 'scorer-result', 3)
   if (/approv/.test(q)) return latest((e) => e.kind === 'approval', 3)
   if (/sign/.test(q)) return latest((e) => e.kind === 'signature', 3)
   if (/last|latest|recent|decision|why/.test(q)) return latest((e) => e.kind === 'gate-decision' || e.kind === 'policy-change', 1)

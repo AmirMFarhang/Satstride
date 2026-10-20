@@ -138,28 +138,17 @@ function qvacRows(q) {
   ]
 }
 
-function compexCard(d) {
-  const c = d.compex ?? {}
+function scorerCard(d) {
+  const c = d.scorer ?? {}
   const tone = c.status === 'answering' ? 'ok' : c.status === 'down' ? 'alert' : 'warn'
-  const keys = c.evidence_keys ?? []
   return card({
-    title: 'Compex / QVAC',
-    iconName: 'cpu',
-    sub: 'credit scoring service',
-    aside: chip(c.status ?? 'unknown', tone, { dot: true }),
-    body: `${kv([
-      ['API', mono(c.api_url)],
-      ['HTTP', has(c.http_code) ? `<span class="num">${esc(c.http_code)}</span>` : text(null)],
-      ['Scorer', text(c.scorer_label)],
+    title: 'Scorer / QVAC', iconName: 'cpu', sub: 'configured credit-check service',
+    aside: chip(c.status ?? 'not observed', tone, { dot: true }),
+    body: kv([
+      ['Provider', text(c.provider)], ['Scorer', text(c.scorer_label)],
       ...qvacRows(c.qvac),
-    ])}
-    <div>
-      <div class="small muted" style="margin-bottom:6px">Evidence keys</div>
-      ${keys.length ? `<div class="sublist">${keys.map((k) => `<div class="subitem" data-key="${esc(k.keyid)}" style="flex-direction:row;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap">
-          ${keyCell(k.keyid, { head: 10, tail: 4, what: 'key id' })}
-          <span class="chips">${chip(k.alg ?? '—', 'neutral', { cls: 'chip-mono' })}${k.development ? chip('development key', 'warn', { dot: true, tip: 'A development key: evidence signed with it is refused' }) : ''}</span>
-        </div>`).join('')}</div>` : '<span class="muted small">No evidence keys reported.</span>'}
-    </div>`,
+      ['Trust', text(c.provider === 'in-process' || c.provider === 'container' ? 'Local host trusted · dev-inprocess' : 'External verification required')],
+    ]),
   })
 }
 
@@ -194,7 +183,7 @@ export default {
         ${platformCard(d)}
         ${checkNodesCard(d)}
         ${lendersCard(d)}
-        ${compexCard(d)}
+        ${scorerCard(d)}
         ${relaysCard(d)}
         ${assistantCard(d)}
         ${uptimeCard(d)}

@@ -19,7 +19,7 @@ const sheet = signTermSheet(buildTermSheet({
   negotiation: { id: '33'.repeat(32), accept_hash: '44'.repeat(32) }, borrower_pk: B.pubkey, lender_pk: L.pubkey, platform_pk: P.pubkey,
   asset_id: 'rgb:funding-resume', oracle_quote: new Oracle(P, 10_000_000).quote(100), grace_blocks: 5, ladder_step: 0,
   prev_passbook_txid: null, settlement: { kind: 'cosign-rgb' },
-  scorer: { provider: 'compex', scorer_id: 'compex:unit', code_measurement: `sha256:${'55'.repeat(32)}`, contract_hash: '66'.repeat(32), trust: 'software-evidence', result_hash: '77'.repeat(32), fallback: false, recommendation: 'QUALIFY', evidence: { kind: 'compex-dsse', envelope_sha256: '88'.repeat(32), evidence_root_hash: '99'.repeat(32), execution_id: 'unit-funding-resume' } },
+  scorer: { provider: 'in-process', scorer_id: 'passbook-sandbox:unit', code_measurement: `sha256:${'55'.repeat(32)}`, contract_hash: '66'.repeat(32), trust: 'dev-inprocess', result_hash: '77'.repeat(32), fallback: false, recommendation: 'QUALIFY', evidence: { kind: 'passbook-run-record', run_record_sha256: '88'.repeat(32) } },
   consent_hash: 'aa'.repeat(32), salt: 'bb'.repeat(32),
 }), 'lender', L.secretKey)
 const ID = termSheetHash(sheet), terms = sheet.terms, parties = partiesOf(terms)

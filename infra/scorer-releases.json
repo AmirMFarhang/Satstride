@@ -1,0 +1,26 @@
+{
+  "v": 1,
+  "kind": "passbook-scorer-releases",
+  "signer_pk": "f006c7a48b95f70e6328cef890c32a7de57c6ac1684cc75c1b5dfdd2b5fec1f7",
+  "development": true,
+  "issued_at": 1792483106,
+  "builds": [
+    {
+      "label": "in-process sandbox (this source tree)",
+      "provider": "in-process",
+      "code_measurement": "source:b592f8b1be9194659f4e4d5db5097e5d7c9d9af50593e26573d45979937a0dc3",
+      "contract_hash": "4380a2697d60b4f55f20e85da8e41486741fd33a714af9581bf7bbe1960eab6a",
+      "max_trust": "dev-inprocess"
+    },
+    {
+      "label": "container scorer (this source tree, unmeasured image)",
+      "provider": "container",
+      "code_measurement": "source:b592f8b1be9194659f4e4d5db5097e5d7c9d9af50593e26573d45979937a0dc3",
+      "contract_hash": "4380a2697d60b4f55f20e85da8e41486741fd33a714af9581bf7bbe1960eab6a",
+      "max_trust": "dev-inprocess"
+    }
+  ],
+  "external_evidence_keyids": [],
+  "operators": [],
+  "sig": "e0c44992d1caff8e03c0488e9dd328cd9d19065c57eb009f6c6fce81a59d116cff3f1f8c81f3b7c11469ad462e70ec1265baf8d88eec6264d5e11c5a6cfdd095"
+}

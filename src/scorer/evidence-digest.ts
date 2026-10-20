@@ -2,7 +2,7 @@
 // carries a digest of the evidence the lender verified. Every term-sheet field
 // is folded into the terms nonce, so the terms hash the lock commits changes
 // with it.
-//   Compex: sha256 of the canonical DSSE envelope. This is the value Compex
+//   external provider: sha256 of the canonical DSSE envelope. This is the value external provider
 //           itself reports as envelopeSha256; test/termsheet-evidence.test.ts
 //           checks it against a real sample.
 //   in-process / container: the hash of the sandbox's signed run record.

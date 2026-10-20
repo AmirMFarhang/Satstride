@@ -25,7 +25,7 @@ export function trustPolicy(over: Partial<TrustPolicy> = {}): TrustPolicy {
   return { minTrust: 'dev-inprocess', releases, releaseSignerPk: release.pubkey, contract, ...over }
 }
 
-export function sandboxEngine(label = 'container scorer (FALLBACK: no Compex config on this node)', enclave?: KeyPair) {
+export function sandboxEngine(label = 'container scorer (FALLBACK: no external provider config on this node)', enclave?: KeyPair) {
   const f = investigationFixture('fatima')
   const engine = new SandboxScorerEngine({ provider: 'container', key: enclave ?? f.key, chain: f.chain, reasoner: new PlaybookReasoner(), blocksPerMonth: 30, oraclePk: f.oracle.pubkey, measurement: SOURCE, now: () => NOW })
   return { f, engine: new SandboxCheckEngine(engine, { label, fallback: true, modelHash: null }) }

@@ -78,7 +78,7 @@ describe('model selection and prompts', () => {
     if (saved.model === undefined) delete process.env.QVAC_MODEL
   })
 
-  it('picks rules by default, the in-process SDK for qvac, the server for qvac-http, and nothing else', () => {
+  it('picks rules by default, an explicit deterministic playbook, local QVAC backends, and nothing else', () => {
     delete process.env.PASSBOOK_AI
     assert.equal(primaryReasonerFromEnv().engine, 'rules')
     process.env.PASSBOOK_AI = 'qvac'
@@ -87,8 +87,10 @@ describe('model selection and prompts', () => {
     assert.equal(primaryReasonerFromEnv().engine, 'qvac-sdk:qwen3-4b')
     process.env.PASSBOOK_AI = 'qvac-http'
     assert.match(primaryReasonerFromEnv().engine, /^qvac-http:/)
+    process.env.PASSBOOK_AI = 'playbook'
+    assert.equal(primaryReasonerFromEnv().engine, 'playbook:passbook-v1')
     process.env.PASSBOOK_AI = 'cloud'
-    assert.throws(() => primaryReasonerFromEnv(), /PASSBOOK_AI must be rules, qvac or qvac-http/)
+    assert.throws(() => primaryReasonerFromEnv(), /PASSBOOK_AI must be rules, playbook, qvac or qvac-http/)
   })
 
   it('categorises long histories in batches and keeps the order', async () => {

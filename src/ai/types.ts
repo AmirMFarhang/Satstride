@@ -47,7 +47,7 @@ export interface CreditMemoInput {
   passbook: { on_time: number; late: number; defaults: number; open: number; step: number; unverified: number }
   verified_inflows: { count: number; sum: Micro; months_covered: number }
   checks: { id: string; ok: boolean; detail: string }[]
-  /** Who ran the checks, for the memo text: the sandbox unless a scorer's released outputs (e.g. Compex). */
+  /** Who ran the checks, for the memo text: the sandbox unless a scorer's released outputs (e.g. external provider). */
   checks_by?: string
   base_apr_bps: Bps
   band: [number, number]

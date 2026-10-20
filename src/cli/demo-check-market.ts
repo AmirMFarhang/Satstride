@@ -7,7 +7,7 @@
 // (infra/check-market.sh), plus the borrower's own RGB Lightning node. Both nodes
 // run IN THIS DEMO PROCESS on this laptop; a standing node is
 // `passbook check-node serve`. Their scorer is the container scorer's code in
-// process, labelled FALLBACK (no Compex config on the node). Without the flag
+// process, labelled FALLBACK (no external provider config on the node). Without the flag
 // the demo never loads this file.
 
 import type { BorrowerCheckMarket } from '../agents/borrower.js'

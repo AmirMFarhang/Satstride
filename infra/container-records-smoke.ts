@@ -109,7 +109,7 @@ try {
   assert.equal(await chain.getHeight(), beforeHeight, 'sandbox smoke did not mine')
   const report = {
     generated_at: new Date().toISOString(), source, source_tree_verified: true,
-    scope: 'Real Docker/rules sandbox; real seeded RGB wallet transfers and Bitcoin anchors. No QVAC inference, new loan, native reconciliation, TEE or Compex deployment.',
+    scope: 'Real Docker/rules sandbox; real seeded RGB wallet transfers and Bitcoin anchors. No QVAC inference, new loan, native reconciliation, TEE or external provider deployment.',
     image_id: imageDigest, image_revision_label_verified: true, docker_context: 'Committed .dockerignore whitelist: package.json, package-lock.json, tsconfig.json, src only.', network_mode: result.run_record!.network_mode, readonly_rootfs: true, uid: 1000,
     rpc_port: 18473, sandbox_port: 4210, chain: 'bitcoind regtest', height_before: beforeHeight, height_after: await chain.getHeight(),
     asset_id: state.asset.id, rgb_anchors_checked: anchors,

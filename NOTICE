@@ -10,7 +10,7 @@ compatibility.
 
 Third-party design references
 
-The local investigation design was informed by Compex Fraud Desk (Apache-2.0),
+The retained local investigator and playbook are derived from Compex Fraud Desk (Apache-2.0),
 including evidence-ID grounding, coded decisions, bounded retry budgets, cautious
 policy, a written playbook and offline replay.
 https://github.com/CompexTo/fraud-desk/tree/1129a15bfee7476d8d109f9437595f95edb25615
@@ -22,8 +22,10 @@ IBM AMLSim (Apache-2.0) informed cycle, fan-in and gather/scatter vocabulary.
 https://github.com/IBM/AMLSim
 
 These projects are external references; their separate results are not Satstride
-measurements. Compex Credit Desk and the Compex platform are separate projects.
-Their source is not copied into this snapshot.
+measurements. Compex Credit Desk, platform runtime and provider integration are
+separate projects. The optional provider adapter lives in a private external
+package; its API client, evidence formats and fixtures are not bundled here.
+The retained investigator contains no core Compex runtime technology.
 
 Vendored and distributed materials
 

@@ -17,7 +17,7 @@ import { C, F, R, t } from '../theme'
 import { Icon } from '../icons'
 import { btc, partyName, pctText, usd, usdNum } from '../format'
 
-const BUSY_STAGES = new Set(['negotiating', 'check-node', 'consent', 'check-sealing', 'compex-approval', 'check-opening', 'check-result', 'applying', 'awaiting', 'no-terms', 'terms', 'collateral', 'locking', 'funding'])
+const BUSY_STAGES = new Set(['negotiating', 'check-node', 'consent', 'check-sealing', 'check-opening', 'check-result', 'applying', 'awaiting', 'no-terms', 'terms', 'collateral', 'locking', 'funding'])
 
 export function PassbookTab() {
   const s = useApp()

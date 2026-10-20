@@ -32,6 +32,7 @@ test('the phone\'s market policy passes the laptop\'s validation, signed by the 
   assert.deepEqual(lenderPolicyProblems(policy), [])
   assert.ok(policyValid(policy), 'signed by its owner over hashObject without sig (signWith)')
   assert.equal(policy.min_apr_bps, 1000)
+  assert.equal(policy.min_scorer_trust, 'dev-inprocess', 'new local scorer offers state their development assurance explicitly')
   assert.equal(policy.opening?.apr_bps, 1200, 'the agent opens at the posted APR')
   assert.equal(policy.max_ltv_bps, maxLtv(OFFER), 'the top of the ladder under the platform limit')
   assert.deepEqual(policy.approval_rules, { approvers: [L.pubkey], maker_checker_above: OFFER.max }, 'one key on the phone: never a loan that needs a second approver')

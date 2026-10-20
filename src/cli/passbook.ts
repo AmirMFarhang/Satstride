@@ -16,7 +16,7 @@ if (args[0] === 'agent' && ['check', 'snapshot'].includes(args[1])) {
   const { runGovernanceCli } = await import('../governance/cli.js')
   process.exitCode = await runGovernanceCli(args)
 } else if (args[0] === 'check-node' && args[1] === 'provide') {
-  // The check node in service-provider mode: Compex or nothing, lender-paid checks (src/checknode/provider.ts, docs/SERVICE-PROVIDER.md)
+  // The check node in service-provider mode: external provider or nothing, lender-paid checks (src/checknode/provider.ts, docs/SERVICE-PROVIDER.md)
   const { runProvideCli } = await import('../checknode/provider.js')
   process.exitCode = await runProvideCli(args)
 } else if (args[0] === 'check-node') {

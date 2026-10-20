@@ -32,7 +32,7 @@ export interface LoanReceipt {
   /** termSheetHash(termsheet) = the terms hash committed in the lock's OP_RETURN */
   loan_id: Hex
   termsheet: TermSheet
-  /** Must equal termsheet.scorer.evidence (the Compex envelope digest or the sandbox run record); null only for a v1 sheet, which predates the digest. */
+  /** Must equal termsheet.scorer.evidence (the external provider envelope digest or the sandbox run record); null only for a v1 sheet, which predates the digest. */
   evidence: TermSheetEvidence | null
   approvals: Approval[]
   lock: { txid: Hex; vout: number }
@@ -115,7 +115,7 @@ export async function checkLoanReceipt(r: LoanReceipt, chain: ChainClient, ctx: 
   try { loanId = termSheetHash(sheet) } catch { /* reported below */ }
   const sheetProblems = termSheetProblems(sheet, { requireSignatures: true, economics })
   check('termsheet', !!loanId && loanId === r.loan_id && sheetProblems.length === 0, sheetProblems.length ? sheetProblems.slice(0, 3).join('; ') : loanId === r.loan_id ? 'signed by both agents; its hash is the loan id' : 'loan id is not the term-sheet hash')
-  check('evidence', hashObject(r.evidence ?? null) === hashObject(sheet.scorer.evidence ?? null), !r.evidence ? 'no evidence digest (v1 term sheet, issued before evidence binding)' : r.evidence.kind === 'compex-dsse' ? `Compex envelope ${r.evidence.envelope_sha256.slice(0, 12)}…, as named in the term sheet` : 'sandbox run record, as named in the term sheet')
+  check('evidence', hashObject(r.evidence ?? null) === hashObject(sheet.scorer.evidence ?? null), !r.evidence ? 'no evidence digest (v1 term sheet, issued before evidence binding)' : r.evidence.kind === 'external-evidence' ? `external evidence ${r.evidence.evidence_sha256.slice(0, 12)}…, as named in the term sheet` : 'sandbox run record, as named in the term sheet')
 
   const policy = ctx.lenderPolicy
   if (policy && (!policyValid(policy) || policy.owner_pk !== t.lender_pk)) check('approvals', false, 'lender policy signature invalid or for another lender')

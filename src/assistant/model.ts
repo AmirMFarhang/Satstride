@@ -7,7 +7,7 @@
 //
 //   PASSBOOK_ASSIST_AI (else PASSBOOK_AI)
 //     qvac        QVAC SDK in this process (QVAC_MODEL, default qwen3-1.7b)
-//     qvac-http   a QVAC OpenAI-compatible server (QVAC_BASE_URL, QVAC_MODEL), e.g. the Compex stack's
+//     qvac-http   a QVAC OpenAI-compatible server (QVAC_BASE_URL, QVAC_MODEL), e.g. the external provider stack's
 //     rules|unset no model: every answer is a template, labelled with fallback_reason NO_MODEL
 // No cloud API is ever an option.
 

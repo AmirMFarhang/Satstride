@@ -29,7 +29,7 @@ const match = (f: NostrFilter, e: NostrEvent) => {
 const LOAN = '7c'.repeat(32)
 
 test('every borrowing stage maps to a loan state; idle shares no loan', () => {
-  for (const s of ['quoting', 'negotiating', 'check-node', 'consent', 'compex-approval', 'terms', 'locking', 'funding', 'open', 'repaying', 'iou', 'releasing', 'closed', 'no-deal', 'check-refused', 'awaiting'])
+  for (const s of ['quoting', 'negotiating', 'check-node', 'consent', 'terms', 'locking', 'funding', 'open', 'repaying', 'iou', 'releasing', 'closed', 'no-deal', 'check-refused', 'awaiting'])
     assert.notEqual(loanStateFromStage(s), 'unknown', s)
   assert.equal(loanStateFromStage('idle'), null)
   assert.equal(loanBrief({ loanId: LOAN, role: 'borrower', stage: 'idle' }), null)

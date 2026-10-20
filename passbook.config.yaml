@@ -4,16 +4,11 @@
 # PASSBOOK_CONFIG.
 
 scorer:
-  # in-process | container | compex | compex-nitro (roadmap; refuses to start)
   # Trust each can reach: dev-inprocess (in-process, container)
-  #   < software-evidence (compex: LOCAL_HARDENED_DOCKER, scorer host trusted)
-  #   < hardware-attested (compex-nitro). Passbook never fabricates attestation.
-  # This file is what runs today. The Compex target is
-  # infra/passbook.config.compex.yaml (provider compex, fallback container).
-  provider: container
+  provider: in-process
   # none | container | in-process: used only if the primary is unavailable;
   # its results keep their own trust level and are labelled as fallback
-  fallback: in-process
+  fallback: none
   min_trust_for_lenders: dev-inprocess
   # signed allowlist of scorer measurements + contract hashes
   approved_builds: infra/scorer-releases.json

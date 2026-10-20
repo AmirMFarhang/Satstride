@@ -18,7 +18,7 @@ export function viewOffers(offers: Offer[], principal: number, limit: number, ow
   return offers.filter((o) => !ownPk || o.lender_pk !== ownPk).map((offer) => {
     const p = offer.payload
     const payBack = principal + termInterest({ principal, apr_bps: p.apr_bps, term_blocks: p.term_blocks })
-    // a lender that negotiates over Nostr takes income from the credit check it pays for (Compex reads the
+    // a lender that negotiates over Nostr takes income from the credit check it pays for (scorer reads the
     // history); only an offer without negotiation terms needs payer-signed salary records this wallet lacks
     const negotiable = (p as { negotiation?: unknown }).negotiation !== undefined
     const needsIncome = !negotiable && p.requirements.inflow_months > 0

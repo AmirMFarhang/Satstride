@@ -48,3 +48,18 @@ it('rejects edited history and excludes signed gifts before counted coverage', a
   assert.equal(result.checks.find((c) => c.id === 'inflows')?.ok, false)
   assert.equal(result.income_evidence?.qualified, false)
 })
+
+it('the local scorer reconciles public-testnet native history through Esplora and refuses spent allocations', async () => {
+  for (const spent of [false, true]) {
+    const f = fixture()
+    const chain = {
+      kind: 'esplora',
+      getHeight: async () => (await f.config.chain.getHeight()) + 10,
+      getTx: (txid: string) => f.config.chain.getTx(txid),
+      outspends: async (txid: string) => (await f.config.chain.getTx(txid))?.outputs.map(() => ({ spent })) ?? [],
+    }
+    const result = await runSandbox(f.bundle, { ...f.config, chain })
+    assert.equal(result.reconciliation?.status, spent ? 'failed' : 'verified')
+    if (spent) assert.equal(result.checks.find((c) => c.id === 'reconcile')?.ok, false)
+  }
+})

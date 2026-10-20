@@ -12,6 +12,7 @@ import { templatedLenderNote } from './confirm.js'
 import { observedRunMaterials, publishedRunMaterials } from './published-materials.js'
 import { RecordingChain, RunRecorder, writeRunArtifact, type RunEnvironment, type RunMaterials } from './run-record.js'
 import { INVESTIGATION_BUDGETS, INVESTIGATION_SYSTEM_PROMPT, INVESTIGATION_TOOL_DEFINITIONS } from './investigate.js'
+import { historyProofMaxAge, nodeUnspent } from '../chain/history-checks.js'
 import { reconcileHistory } from './reconcile.js'
 import { tierIncomeEvidence } from './income-tiers.js'
 import { computeHistoryMetrics, metricMedian, metricSum } from './metrics.js'
@@ -88,12 +89,15 @@ export async function runSandbox(bundle: Bundle, cfg: SandboxConfig): Promise<Sa
   // All financial classification is deterministic. The model searches for context;
   // only code-confirmed evidence can change the eligible ledger below.
   const nativeUnspents: { txid: Hex; vout: number; value: number; script: Hex }[] = []
-  const rpcChain = cfg.chain as ChainClient & { rpc?: <T>(method: string, params: unknown[]) => Promise<T> }
-  const reconciliation = await reconcileHistory(b, recordedChain, { trustedSigners: cfg.oraclePk ? [cfg.oraclePk] : [], assetId: b.asset_id ?? '', currentHeight, ...(rpcChain.rpc ? { getUnspent: async (txid: Hex, vout: number) => {
-    const out = await rpcChain.rpc!<{ value: number; scriptPubKey: { hex: Hex } } | null>('gettxout', [txid, vout, true])
-    if (!out) return null
-    const value = { txid, vout, value: Math.round(out.value * 1e8), script: out.scriptPubKey.hex }; nativeUnspents.push(value); return value
-  } } : {}) })
+  const readUnspent = nodeUnspent(cfg.chain)
+  const reconciliation = await reconcileHistory(b, recordedChain, { trustedSigners: cfg.oraclePk ? [cfg.oraclePk] : [], assetId: b.asset_id ?? '', currentHeight,
+    maxAgeBlocks: historyProofMaxAge(undefined, cfg.chain.kind),
+    ...(readUnspent ? { getUnspent: async (txid: Hex, vout: number) => {
+      const value = await readUnspent(txid, vout)
+      if (value) nativeUnspents.push({txid,vout,...value})
+      return value
+    } } : {}),
+  })
   checks.push({ id: 'reconcile', ok: b.lender_requirements.reconciliation !== 'required' ? reconciliation.status !== 'failed' : reconciliation.status === 'verified', detail: `History ${reconciliation.status}; ${reconciliation.assurance}; ${reconciliation.reasons.join(',') || 'native allocations and observed first transfer verified'}` })
   const definitions = { systemPrompt: INVESTIGATION_SYSTEM_PROMPT, toolDefinitions: INVESTIGATION_TOOL_DEFINITIONS }
   const materials = cfg.runMaterials ?? await observedRunMaterials(cfg.reasoner.engine, definitions)

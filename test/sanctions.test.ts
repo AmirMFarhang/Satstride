@@ -115,7 +115,7 @@ describe('receipts and the audit export link the decision log', () => {
     const loanId = randomHex(32)
     // a request without terms has no loan id; log one entry that names the loan the way a funded loan's entries do
     const d = await gov.decide([transfer(borrower)], { action: 'fund', initiator: { agent: 'lender1' }, counterparty: borrower, screening: { proven_addresses: [CLEAN] } })
-    gov.gate.log.append({ kind: 'scorer-result', action_id: d.action_id, loan_id: loanId, policy_version: 1, input_hashes: {}, decided_by: { kind: 'service', id: 'compex' }, result: 'QUALIFY', detail: {} })
+    gov.gate.log.append({ kind: 'scorer-result', action_id: d.action_id, loan_id: loanId, policy_version: 1, input_hashes: {}, decided_by: { kind: 'service', id: 'external' }, result: 'QUALIFY', detail: {} })
     const log = gov.gate.log.entries()
     const link = governanceLink(log, loanId)!
     assert.equal(link.policy_version, 1)

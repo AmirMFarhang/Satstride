@@ -2,7 +2,7 @@
   "v": 1,
   "id": "passbook-scoring-contract",
   "version": "1.3.0",
-  "description": "What a Passbook credit scorer may read, compute, keep and return. Every provider (in-process, the container fallback and the Compex governed scorer) releases the same passbook-check-outputs shape, and since 1.3.0 (outputs v2) it names the loan the bundle asked for, so a lender that never sees the bundle knows which loan was scored; the in-process and container scorers wrap it in a sandbox-signed result. This contract's hash appears in the descriptor, the signed result and the term sheet. Code measurements are bound to contract hashes by the signed release manifest (scorer.approved_builds), because a contract shipped inside an image cannot name that image's own digest.",
+  "description": "The generic PassBook scoring contract: exact local outputs, model pinning, bounded execution, zero retention and zero egress.",
   "models": [
     {
       "model_id": "qvac-sdk:qwen3-1.7b",
@@ -32,7 +32,6 @@
   "inputs": {
     "bundle_schema": "passbook-bundle-v1 (src/sandbox/types.ts validateBundle)",
     "data_categories": [
-      "chain_checks",
       "collateral_quote",
       "history_proof",
       "loan_request",
@@ -43,7 +42,7 @@
     ]
   },
   "outputs": {
-    "numbers": "the loan request the bundle asked for (principal, fee, term, grace: the terms the lender negotiated), its asset id and a hash of the lender requirements; otherwise income only as a 1,000 USDT band in Compex's format (en dash, thousands separators, e.g. 2,000–3,000 USDT/month); no balances, other amounts, txids or counterparty keys",
+    "numbers": "The requested loan and a 1,000 USDT income band only; no other amounts, txids or counterparty keys.",
     "schema": {
       "type": "object",
       "additionalProperties": false,
@@ -67,7 +66,7 @@
         },
         "income_band": {
           "type": "string",
-          "pattern": "^(not_assessed|(0|[1-9][0-9]{0,2}(,[0-9]{3})*)–[1-9][0-9]{0,2}(,[0-9]{3})* USDT/month)$"
+          "pattern": "^(not_assessed|(0|[1-9][0-9]{0,2}(,[0-9]{3})*)\u2013[1-9][0-9]{0,2}(,[0-9]{3})* USDT/month)$"
         },
         "checks": {
           "type": "array",
@@ -87,10 +86,7 @@
                   "sybil",
                   "disclosure",
                   "investigation",
-                  "reconcile",
-                  "anchor_confirmations",
-                  "history_reconciliation",
-                  "rgb_receive_validation"
+                  "reconcile"
                 ]
               },
               "ok": {
@@ -120,20 +116,7 @@
                   "irregular_genuine",
                   "injection_attempt",
                   "fan_in_burst",
-                  "pass_through",
-                  "INCOME_MEETS_REQUIREMENT",
-                  "INCOME_BELOW_REQUIREMENT",
-                  "INCOME_RECURRING",
-                  "INCOME_VOLATILE",
-                  "INCOME_SIGNED_BY_PAYERS",
-                  "HISTORY_TOO_SHORT",
-                  "LOAN_LIKE_INFLOWS",
-                  "SELF_TRANSFERS_EXCLUDED",
-                  "AFFORDABILITY_OK",
-                  "AFFORDABILITY_SHORTFALL",
-                  "CHAIN_CHECKS_PASSED",
-                  "CHAIN_CHECK_FAILED",
-                  "INSTRUCTIONS_IN_MEMOS"
+                  "pass_through"
                 ]
               }
             },
@@ -222,7 +205,7 @@
         "lender_requirements_hash"
       ]
     },
-    "vocabularies": "check ids: the Passbook sandbox's plus the three chain checks Passbook signs before a Compex run; finding types: the Passbook sandbox's typologies (in-process and container) or the Compex passbook-credit finding codes (Compex)"
+    "vocabularies": "Local sandbox check ids and finding types."
   },
   "egress": "none",
   "retention": "none",
@@ -330,7 +313,7 @@
             },
             "income_band": {
               "type": "string",
-              "pattern": "^(not_assessed|(0|[1-9][0-9]{0,2}(,[0-9]{3})*)–[1-9][0-9]{0,2}(,[0-9]{3})* USDT/month)$"
+              "pattern": "^(not_assessed|(0|[1-9][0-9]{0,2}(,[0-9]{3})*)\u2013[1-9][0-9]{0,2}(,[0-9]{3})* USDT/month)$"
             },
             "checks": {
               "type": "array",
@@ -350,10 +333,7 @@
                       "sybil",
                       "disclosure",
                       "investigation",
-                      "reconcile",
-                      "anchor_confirmations",
-                      "history_reconciliation",
-                      "rgb_receive_validation"
+                      "reconcile"
                     ]
                   },
                   "ok": {
@@ -383,20 +363,7 @@
                       "irregular_genuine",
                       "injection_attempt",
                       "fan_in_burst",
-                      "pass_through",
-                      "INCOME_MEETS_REQUIREMENT",
-                      "INCOME_BELOW_REQUIREMENT",
-                      "INCOME_RECURRING",
-                      "INCOME_VOLATILE",
-                      "INCOME_SIGNED_BY_PAYERS",
-                      "HISTORY_TOO_SHORT",
-                      "LOAN_LIKE_INFLOWS",
-                      "SELF_TRANSFERS_EXCLUDED",
-                      "AFFORDABILITY_OK",
-                      "AFFORDABILITY_SHORTFALL",
-                      "CHAIN_CHECKS_PASSED",
-                      "CHAIN_CHECK_FAILED",
-                      "INSTRUCTIONS_IN_MEMOS"
+                      "pass_through"
                     ]
                   }
                 },

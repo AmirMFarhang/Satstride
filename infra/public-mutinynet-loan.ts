@@ -510,10 +510,10 @@ async function writeRecord(cfg: PassbookConfig, app: ReturnType<typeof createApp
     platform: { loan_status: loan.status, repayment_proof: loan.repayment_proof, register_checks: state.steps.register?.checks, passbook: { pages: view.pages.map((pg) => ({ loan_id: pg.loan_id, status: pg.status, verified: pg.verified })), ladder: view.ladder } },
     not_covered: [
       'The on-chain legs (lock, fund, repay, release) ran in the driver with both wallets open, as in Add-on 4; the offer, the negotiation and the check ran with each side holding only its own key (two processes). Invoices and the release PSBT were not exchanged over Nostr.',
-      'The credit check is the platform sandbox in rules mode (RuleReasoner, no model), not Compex: the lender-paid Compex check is paid over RGB Lightning HODL, and there is no RGB Lightning on Mutinynet here, so there was no check payment. Nothing pretends one happened.',
+      'The credit check is the platform sandbox in rules mode (RuleReasoner, no model), not external provider: the lender-paid external provider check is paid over RGB Lightning HODL, and there is no RGB Lightning on Mutinynet here, so there was no check payment. Nothing pretends one happened.',
       'The platform ran in the driver process (the same Platform code as the server), on Mutinynet through Esplora; its repayment proof is the lender\'s signed acknowledgement (lender_ack), as in Add-on 4.',
       'The price is the platform\'s configured test price ($100,000), not a market feed. 1 block = 1 demo day; Mutinynet blocks come about every 30 s.',
-      'This run is the Mutinynet half. The regtest service provider on the same public relays (lender peer, check node, a borrower process on public relays only, a lender-paid Compex check) is recorded under regtest_provider.',
+      'This run is the Mutinynet half. The regtest service provider on the same public relays (lender peer, check node, a borrower process on public relays only, a lender-paid external provider check) is recorded under regtest_provider.',
     ],
   }
   // the regtest provider proof (infra/public-regtest-proof.ts) lives in the same file; a rewrite keeps it

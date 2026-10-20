@@ -30,11 +30,7 @@ function posture(d) {
   const entries = nodes.reduce((s, n) => s + (isNum(n.log?.entries) ? n.log.entries : 0), 0)
   const lists = d.sanctions?.lists ?? []
   const listEntries = lists.reduce((s, l) => s + (isNum(l.entries) ? l.entries : 0), 0)
-  const c = d.compex ?? {}
-  const runs = c.recent_runs ?? []
-  const runsOk = runs.filter((r) => r.verified).length
-  // accepting a development key or the stand-in model is a trust failure; a run that failed the lender's verification was simply not underwritten
-  const compexTone = c.development_keys_refused === false || c.standin_model_refused === false ? 'alert' : runsOk < runs.length ? 'warn' : 'ok'
+  const c = d.scorer ?? {}
   const borrowers = d.custody?.borrowers ?? []
   const held = borrowers.filter((b) => b.keys_on_this_node && !b.seeded).length
   const personas = borrowers.filter((b) => b.keys_on_this_node && b.seeded).length
@@ -46,7 +42,7 @@ function posture(d) {
     ['sec-nodes', 'Policy', problems ? 'alert' : loosening ? 'warn' : 'ok', problems ? `${problems} problem${problems === 1 ? '' : 's'}` : pending ? `${pending} pending change${pending === 1 ? '' : 's'}` : 'In force, none pending', nodes.map((n) => `${n.role} v${n.policy?.version ?? '?'}`).join(' · ')],
     ['sec-nodes', 'Decision log', unverified ? 'alert' : 'ok', unverified ? `${unverified} chain${unverified === 1 ? '' : 's'} broken` : 'Chain verified ✓', `${fmtInt(entries)} entries across ${nodes.length} node${nodes.length === 1 ? '' : 's'}`],
     ['sec-trust', 'Sanctions list', lists.length ? 'ok' : 'warn', lists.length ? `${lists.length} list${lists.length === 1 ? '' : 's'}, as of ${lists.map((l) => l.as_of).filter(Boolean).sort().at(-1) ?? '—'}` : 'No list loaded', `${fmtInt(listEntries)} addresses${has(d.sanctions?.screen) ? ` · ${d.sanctions.screen}` : ''}`],
-    ['sec-trust', 'Compex trust', compexTone, runs.length ? `${runsOk}/${runs.length} runs verified${runsOk < runs.length ? ` · ${runs.length - runsOk} not underwritten` : ''}` : 'No runs yet', `${c.development_keys_refused ? 'dev keys refused' : 'dev keys accepted'} · ${c.standin_model_refused ? 'stand-in refused' : 'stand-in accepted'}`],
+    ['sec-trust', 'Scorer trust', c.provider ? 'neutral' : 'warn', c.trust_ceiling ?? 'Unknown', c.verification ?? 'No scorer verification metadata reported'],
     ['sec-custody', 'Key custody', held ? 'alert' : personas ? 'warn' : 'ok', held ? `${held} borrower key${held === 1 ? '' : 's'} here` : 'No phone keys here', personas ? `${personas} seeded test persona${personas === 1 ? '' : 's'} (test data) · ${borrowers.length} borrower${borrowers.length === 1 ? '' : 's'} checked` : `${borrowers.length} borrower${borrowers.length === 1 ? '' : 's'} checked`],
   ]
   return `<div class="posture">${items.map(([target, title, tone, value, sub]) => `
@@ -280,7 +276,7 @@ function qvacText(q) {
 
 function trustCards(d, now) {
   const s = d.sanctions ?? {}
-  const c = d.compex ?? {}
+  const c = d.scorer ?? {}
   const r = c.release ?? {}
   return `<div class="grid g-2" id="sec-trust">
     ${card({
@@ -296,19 +292,18 @@ function trustCards(d, now) {
         ], s.lists ?? [], { key: (l) => l.list_id, emptyHtml: empty('No sanctions list loaded', 'Screening needs a list before loans can pass the sanctions rule.', 'list') })}`,
     })}
     ${card({
-      title: 'Compex trust',
+      title: 'Scorer trust',
       iconName: 'cpu',
-      aside: `${c.development_keys_refused ? chip('development keys refused ✓', 'ok') : chip('development keys accepted', 'alert', { dot: true })}${c.standin_model_refused ? chip('stand-in model refused ✓', 'ok') : chip('stand-in model accepted', 'alert', { dot: true })}`,
+      aside: chip(c.trust_ceiling ?? 'unknown', 'neutral'),
       body: `${kv([
         ['Release hash', keyCell(c.release_hash, { what: 'release hash' })],
         ['Provider', text(r.provider)],
         ['Image digest', keyCell(r.image_digest, { head: 14, tail: 6, what: 'image digest' })],
         ['Scoring contract', keyCell(r.scoring_contract_hash, { what: 'scoring contract hash' })],
         ['Model hash', has(r.model_hash) ? keyCell(r.model_hash, { what: 'model hash' }) : '<span class="muted">— none pinned</span>'],
-        ['QVAC rule', qvacText(c.qvac)],
+        ['Verification', text(c.verification)],
         ['QVAC server', c.qvac_server && typeof c.qvac_server === 'object' ? (c.qvac_server.models?.length ? c.qvac_server.models.map((m) => mono(`${m.id} · ${m.state}`)).join(' ') : text(c.qvac_server.status)) : text(null)],
         ['Scorer', text(c.scorer_label)],
-        ['Evidence keys', (c.evidence_keys ?? []).length ? `<span class="chips">${c.evidence_keys.map((k) => `${keyCell(k.keyid, { head: 8, tail: 4, what: 'key id' })}${k.development ? chip('development key', 'warn', { dot: true }) : ''}`).join('')}</span>` : text(null)],
       ])}
       ${table([
         { label: 'Run', cell: (x) => timeCell(x.at, now) },

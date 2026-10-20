@@ -17,9 +17,9 @@ export interface ConsentReceipt {
   borrower_pk: Hex
   /** Descriptor scorer_id of the only scorer allowed to process the bundle. */
   scorer_id: string
-  /** In-process and container: the enclave key allowed to decrypt the bundle. Compex: absent. */
+  /** In-process and container: the enclave key allowed to decrypt the bundle. external provider: absent. */
   scorer_pk?: Hex
-  /** The contract the borrower approves; for Compex this approval is the consent. */
+  /** The contract the borrower approves; for external provider this approval is the consent. */
   contract_hash: Hex
   /** Check market (src/checknode): the operator key that runs the scorer, a processor under this consent. */
   operator_pk?: Hex

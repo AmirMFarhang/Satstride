@@ -31,7 +31,7 @@ export interface ScoringContract {
 export const SCORING_CONTRACT_PATH = 'contracts/scoring.contract.json'
 /**
  * Scoring contract 1.2.0 (outputs v1, no scored loan), kept for evidence issued under it: S1 and the first funded regtest
- * loan (17 October), and Compex's samples. A lender on the current contract refuses that evidence.
+ * loan (17 October), and external provider's samples. A lender on the current contract refuses that evidence.
  */
 export const SCORING_CONTRACT_1_2_0_PATH = 'contracts/history/scoring.contract.1.2.0.json'
 

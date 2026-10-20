@@ -29,7 +29,7 @@ test('console live: tasks come from recorded obligations and fresh relay observa
 })
 
 test('console live: unavailable sources and relay announcements keep their actual meaning', () => {
-  const services = liveServices({ check_nodes: [{ status: 'unreachable' }], compex: { status: 'down', qvac: { status: 'loading', models: [] } }, assistant: { status: 'running' }, relays: [{ connected: true }, { connected: false }] })
+  const services = liveServices({ check_nodes: [{ status: 'unreachable' }], scorer: { status: 'unreachable', qvac: { status: 'loading', models: [] } }, assistant: { status: 'running' }, relays: [{ connected: true }, { connected: false }] })
   assert.equal(services.find((service: { id: string }) => service.id === 'check').status, 'Unavailable')
   assert.equal(services.find((service: { id: string }) => service.id === 'model').status, 'Loading')
   assert.equal(services.find((service: { id: string }) => service.id === 'assistant').status, 'Announced')

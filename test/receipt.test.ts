@@ -30,7 +30,7 @@ function sheetFor(principal = 600 * U, preimage = randomHex()): { sheet: TermShe
   let sheet = buildTermSheet({
     agreed, negotiation: { id: randomHex(), accept_hash: randomHex() }, borrower_pk: borrower.pubkey, lender_pk: lender.pubkey, platform_pk: platform.pubkey, asset_id: 'rgb:usdt',
     oracle_quote: oracle.quote(500), grace_blocks: 5, ladder_step: 0, prev_passbook_txid: null, settlement: { kind: 'ln-rln', atomic },
-    scorer: { provider: 'compex', scorer_id: 'compex:passbook-credit', code_measurement: 'sha256:' + '37'.repeat(32), contract_hash: 'cd'.repeat(32), trust: 'software-evidence', result_hash: 'ef'.repeat(32), fallback: false, recommendation: 'QUALIFY', evidence: { kind: 'compex-dsse', envelope_sha256: '3b'.repeat(32), evidence_root_hash: 'b9'.repeat(32), execution_id: 'gov-1' } },
+    scorer: { provider: 'in-process', scorer_id: 'local-sandbox', code_measurement: 'sha256:' + '37'.repeat(32), contract_hash: 'cd'.repeat(32), trust: 'dev-inprocess', result_hash: 'ef'.repeat(32), fallback: false, recommendation: 'QUALIFY', evidence: { kind: 'passbook-run-record', run_record_sha256: '3b'.repeat(32) } },
     consent_hash: '12'.repeat(32), salt: randomHex(),
   })
   sheet = signTermSheet(signTermSheet(sheet, 'lender', lender.secretKey), 'borrower', borrower.secretKey)

@@ -1,7 +1,7 @@
 // The credit check of the public Mutinynet run (infra/public-mutinynet-loan.ts): the platform
 // sandbox in rules mode (RuleReasoner: no model), the same sandbox a regtest negotiated loan uses.
 //
-// The lender-paid Compex check is paid over RGB Lightning HODL, and there is no RGB Lightning
+// The lender-paid external provider check is paid over RGB Lightning HODL, and there is no RGB Lightning
 // on Mutinynet here, so this run makes no check payment and does not pretend one.
 //
 //   borrower (its own process, only its key): builds its bundle from its own Mutinynet RGB

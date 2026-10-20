@@ -2,9 +2,8 @@
 // large messages travel as hash-checked chunks, each a signed NIP-44 event
 // under 60 KiB; small ones are unchanged. The largest real messages are the
 // borrower's sealed bundle at the offer's maximum and the operator's sealed
-// result carrying a real Compex envelope (gov-cb3b8985, 17 October).
+// result carrying a synthetic opaque result; no provider-specific evidence format.
 import assert from 'node:assert/strict'
-import { readFileSync } from 'node:fs'
 import { randomBytes } from 'node:crypto'
 import { describe, it } from 'node:test'
 import { keyPairFromLabel, randomHex } from '../src/core/crypto.js'
@@ -22,9 +21,9 @@ const sender = keyPairFromLabel('wire-sender')
 const recipient = keyPairFromLabel('wire-recipient')
 const bytes = (x: unknown) => new TextEncoder().encode(JSON.stringify(x)).length
 
-/** The largest messages a check sends: a REQUEST-sized bundle ciphertext and a FEEDBACK with a sealed real Compex result. */
+/** The largest messages a check sends: a REQUEST-sized bundle ciphertext and a FEEDBACK with a sealed synthetic opaque result. */
 function largestMessages() {
-  const outcome = JSON.parse(readFileSync(new URL('./fixtures/compex/regtest-fatima/scorer.json', import.meta.url), 'utf8'))
+  const outcome = { kind: 'external-evidence', descriptor: {}, evidence: { synthetic_wire_vector: randomBytes(12_000).toString('base64') }, outputs: {}, fallback: false } as unknown as CheckPlaintext['outcome']
   const plaintext: CheckPlaintext = { v: 1, kind: 'passbook-check-plaintext', negotiation_id: randomHex(32), request_nonce: randomHex(32), consent_hash: randomHex(32), outcome }
   const sealed = seal(plaintext, freshKey())
   // max_bundle_bytes 60,000 encrypted with NIP-44 (base64): about 80 KB of ciphertext.
@@ -40,8 +39,8 @@ describe('check messages under 60 KiB on the wire', () => {
   it('the largest real messages become signed NIP-44 events under 60 KiB each, and reassemble exactly', async () => {
     const signer = keyPairSigner(sender)
     const all = largestMessages()
-    // The sealed real Compex result fits in one event; a full-size bundle and the KEY chain carrying it do not.
-    assert.ok(bytes(all.feedback) < 60 * 1024, `the real sealed result is ${bytes(all.feedback)} bytes`)
+    // The sealed synthetic opaque result fits in one event; a full-size bundle and the KEY chain carrying it do not.
+    assert.ok(bytes(all.feedback) < 60 * 1024, `the synthetic sealed result is ${bytes(all.feedback)} bytes`)
     for (const name of ['request', 'key'] as const) assert.ok(bytes(all[name]) > 64 * 1024, `${name} is larger than the relays accept (${bytes(all[name])} bytes)`)
     for (const [name, msg] of Object.entries(all)) {
       const parts = packWire(msg)

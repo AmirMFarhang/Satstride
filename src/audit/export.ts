@@ -1,6 +1,6 @@
 // `passbook audit export <loan>`: one hash-chained file per loan with the
 // negotiation messages, the term sheet, the human approvals, the scorer
-// evidence (Compex envelope or sandbox-signed result) and, when present, the
+// evidence (external provider envelope or sandbox-signed result) and, when present, the
 // loan receipt. Each entry commits to its content and to the previous entry,
 // and the export re-runs the checks that can be run offline.
 

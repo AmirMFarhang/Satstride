@@ -59,8 +59,8 @@ export function marketPolicyInput(pubkey: Hex, assetId: string, offer: OfferPoli
     max_ltv_bps: maxLtv(offer, e),
     term_blocks: { min: offer.term_blocks, max: offer.term_blocks },
     required_checks: requiredChecks(offer.requirements) as MarketPolicy['required_checks'],
-    // the Compex check's signed evidence; the phone checks its DSSE signature and binding itself
-    min_scorer_trust: 'software-evidence',
+    // New offers explicitly choose local development assurance; saved signed policies keep their own floor.
+    min_scorer_trust: 'dev-inprocess',
     accepted_settlements: ['cosign-rgb'],
     // one key on this phone: the person's own approval is the only one, so no loan needs a second approver
     approval_rules: { approvers: [pubkey], maker_checker_above: offer.max },

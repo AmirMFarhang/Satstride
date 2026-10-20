@@ -8,7 +8,7 @@ import { routeFor, type AssistContextInput, type AssistIntent, type CheckOutcome
 const STAGE_STATE: Record<string, LoanState> = {
   quoting: 'negotiating', quoted: 'negotiating', negotiating: 'negotiating',
   'no-deal': 'no-deal', 'negotiation-failed': 'no-deal',
-  'check-node': 'checking', consent: 'checking', 'check-sealing': 'checking', 'compex-approval': 'checking', 'check-opening': 'checking', 'check-result': 'checking', checking: 'checking',
+  'check-node': 'checking', consent: 'checking', 'check-sealing': 'checking', 'check-opening': 'checking', 'check-result': 'checking', checking: 'checking',
   // a protocol refusal, or a local check that failed before anything went to the lender: no outcome was returned,
   // so this is not a DECLINE (a DECLINE comes only from the check's own recommendation, below)
   'check-refused': 'check-failed', 'declined-check': 'check-failed',
@@ -22,7 +22,7 @@ export function loanStateFromStage(stage: string | undefined): LoanState | null 
   return STAGE_STATE[stage] ?? 'unknown'
 }
 
-/** A Compex/sandbox recommendation as the sheet names it; anything else is left out. */
+/** A scorer/sandbox recommendation as the sheet names it; anything else is left out. */
 export function checkOutcome(recommendation: unknown): CheckOutcome | undefined {
   const r = typeof recommendation === 'string' ? recommendation.toUpperCase() : ''
   return r === 'QUALIFY' || r === 'ESCALATE' || r === 'DECLINE' ? r : undefined

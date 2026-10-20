@@ -29,7 +29,7 @@ export async function checkLoan(agent: PhoneBorrower, id: Hex, l: PhoneLoan): Pr
     const valid = approvals.filter((a) => a.termsheet_hash === id && a.role === 'lender' && verifyObject(a, a.approver_pk))
     tick('approvals', valid.length > 0 && valid.length === approvals.length, 'Lender approvals', `${valid.length} of ${approvals.length} verify for this sheet`)
     const e = l.termsheet.scorer.evidence
-    tick('evidence', !!e, 'Evidence digest', e ? (e.kind === 'compex-dsse' ? `Compex run ${e.execution_id}, envelope ${e.envelope_sha256.slice(0, 12)}…` : `run record ${e.run_record_sha256.slice(0, 12)}…`) : 'none in this sheet')
+    tick('evidence', !!e, 'Evidence digest', e ? `reference ${hashObject(e).slice(0, 12)}…` : 'none in this sheet')
   }
 
   if (!l.lock) {

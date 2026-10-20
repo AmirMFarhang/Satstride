@@ -201,7 +201,7 @@ export function PostOffer({ params }: { params: Record<string, unknown> }) {
       ) : null}
       <Disclosure label="What am I agreeing to?">
         {negotiate
-          ? <P>{`Anyone can read this offer. Your agent opens at ${pctText(apr)} and never agrees below ${pctText(floorBps)}, under the platform's caps; every move is signed and checked against the rules you sign now. After a deal, the check node runs a Compex credit check on credit and this phone opens and verifies it. Only a QUALIFY becomes a term sheet, and you approve each one.`}</P>
+          ? <P>{`Anyone can read this offer. Your agent opens at ${pctText(apr)} and never agrees below ${pctText(floorBps)}, under the platform's caps; every move is signed and checked against the rules you sign now. After a deal, the check node runs a local credit check with development assurance on credit and this phone opens and verifies it. Only a QUALIFY becomes a term sheet, and you approve each one.`}</P>
           : <P>Anyone can read this offer. A borrower who fits applies; this phone checks the platform's signed private check and their passbook on Bitcoin, prices the loan by fixed rules and accepts it if every check passes.</P>}
         {negotiate ? <P>{`${BILLED_LABEL}: the check's price is added to the platform fee you pay over RGB when the loan closes. If no loan follows, the provider absorbs it.`}</P> : null}
         {autoFund

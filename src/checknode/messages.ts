@@ -7,9 +7,9 @@
 //
 //   REQUEST   payer -> operator   offer hash, consent receipt, nonce, rail, the
 //                                 bundle encrypted to the scorer's enclave key
-//                                 (Compex: to the operator key)
-//   [FEEDBACK consent-required -> APPROVE]  Compex only: the borrower approves
-//                                 the exact Compex contract version
+//                                 (external provider: to the operator key)
+//   [FEEDBACK consent-required -> APPROVE]  external provider only: the borrower approves
+//                                 the exact external provider contract version
 //   FEEDBACK  operator -> payer   status 'payment-required' with the signed
 //                                 commitment, the sealed result and the invoice;
 //                                 or 'error' with a coded reason

@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import type { PassbookCheckOutputs } from '../../../src/scorer/types.ts'
 import { checkResultWords } from '../src/app/check-result.ts'
 
-const checks: PassbookCheckOutputs['checks'] = ['anchor_confirmations', 'history_reconciliation', 'rgb_receive_validation', 'affordability', 'inflows', 'headroom', 'injection'].map((id) => ({ id, ok: true })) as PassbookCheckOutputs['checks']
+const checks: PassbookCheckOutputs['checks'] = ['reconcile', 'investigation', 'categorise', 'affordability', 'inflows', 'headroom', 'injection'].map((id) => ({ id, ok: true })) as PassbookCheckOutputs['checks']
 
 test('an ESCALATE with seven passing checks explains human review without blaming the history or income', () => {
   const words = checkResultWords({ recommendation: 'ESCALATE', checks })

@@ -1,5 +1,5 @@
 // The borrow flow on one screen: the negotiated path (Negotiated.tsx: negotiation, check node,
-// consent and Compex approval, the verified result), then stop 2 (accept and lock: canvas 14),
+// consent and scorer approval, the verified result), then stop 2 (accept and lock: canvas 14),
 // the lock and the funds arriving. The flow keeps running if the person leaves, and this screen
 // picks it up where it is.
 import React, { useEffect } from 'react'

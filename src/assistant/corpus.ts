@@ -79,11 +79,11 @@ export const HELP_CORPUS: readonly HelpSection[] = [
   {
     id: 'check',
     title: 'The credit check',
-    keywords: ['check', 'credit check', 'compex', 'check node', 'score', 'scoring', 'consent', 'qvac', 'fraud'],
+    keywords: ['check', 'credit check', 'check node', 'score', 'scoring', 'consent', 'qvac', 'fraud'],
     text:
-      'Before a lender funds, a check node runs a credit check with Compex\'s Credit Desk on a local QVAC model. You choose the check node and see a consent screen first: the operator, the release it runs, the data categories and who pays. ' +
-      'The lender pays for the check; you never pay and never need Lightning. Your bundle is sealed to the operator\'s key, you approve the exact Compex contract version, ' +
-      'and the result comes back signed (DSSE). Your phone verifies the signature and that the result names exactly the loan you asked for.',
+      'Before a lender funds, a check node runs a credit check with the local PassBook scorer. You choose the check node and see a consent screen first: the operator, the release it runs, the data categories and who pays. ' +
+      'The lender pays for the check; you never pay and never need Lightning. Your bundle is sealed to the scorer key declared by the operator you accepted, ' +
+      'and the result comes back signed by that scorer. Local software evidence trusts its host. Your phone verifies the signature and that the result names exactly the loan you asked for.',
     intent: 'borrowing-now',
   },
   {

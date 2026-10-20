@@ -73,9 +73,9 @@ test('an open negotiation and a mixed list are shown as they are', async () => {
   assert.equal(aprText(1250), '12.5%')
 })
 
-// the tick ids and order openForwardedCheck and borrowerCompexChecks produce (src/checknode/borrower-check.ts, src/scorer/compex-dsse.ts)
-const IDS = ['key-message', 'offer', 'message-chain', 'request-is-this-part', 'approval-is-mine', 'consent-in-commitment', 'commitment', 'key-binding', 'scorer-is-offered-release',
-  'evidence:dsse-signature', 'evidence:execution-released', 'evidence:execution-id', 'evidence:run-contract', 'evidence:workload', 'evidence:qvac-model', 'evidence:run-binding', 'evidence:artifact-opening', 'evidence:outputs-addressed', 'evidence:scored-loan']
+// the tick ids and order openForwardedCheck and borrowerscorerChecks produce (src/checknode/borrower-check.ts, src/scorer/portable-evidence.ts)
+const IDS = ['key-message', 'offer', 'message-chain', 'request-is-this-part', 'consent-in-commitment', 'commitment', 'key-binding', 'scorer-is-offered-release',
+  'evidence:output-schema', 'evidence:contract', 'evidence:scorer-key', 'evidence:offered-release', 'evidence:result-scorer', 'evidence:signature', 'evidence:run-record-signature', 'evidence:binding', 'evidence:consent', 'evidence:bundle', 'evidence:scored-loan']
 const ticks = (fail?: string): CheckTick[] => IDS.map((id) => ({ id, ok: id !== fail, detail: `detail of ${id}` }))
 const view = (t: CheckTick[], recommendation = 'QUALIFY') => ({ ok: t.every((x) => x.ok), ticks: t, outputs: { recommendation, income_band: 'B' } }) as unknown as Pick<BorrowerCheckView, 'ok' | 'ticks' | 'outputs'>
 
@@ -90,23 +90,23 @@ test('the check visualizer places the envelope by the real stage and shows the p
   assert.equal(ok.ok, true)
   assert.deepEqual(ok.ticks.map((x) => x.id), IDS, 'every tick, in the phone\'s order')
   assert.deepEqual(ok.ticks.filter((x) => x.key).map((x) => x.id), [...KEY_TICKS])
-  assert.equal(tickLabel('evidence:dsse-signature'), 'DSSE signature')
-  assert.match(tickLabel('evidence:run-binding'), /Binding v2/)
+  assert.equal(tickLabel('evidence:signature'), 'Result signature')
+  assert.match(tickLabel('evidence:binding'), /Binding to this borrower/)
   assert.deepEqual(ok.verdict, { recommendation: 'QUALIFY', tone: 'good', income_band: 'B' })
   assert.equal(checkPicture({ phase: 'opened', view: view(ticks(), 'ESCALATE') }).verdict?.tone, 'hold')
   assert.equal(tickLabel('evidence:something-new'), 'something new', 'an unknown tick shows by its id')
 })
 
 test('a check that does not verify shows no verdict, and a refusal shows its code', () => {
-  const bad = checkPicture({ phase: 'opened', view: view(ticks('evidence:run-binding')) })
+  const bad = checkPicture({ phase: 'opened', view: view(ticks('evidence:binding')) })
   assert.equal(bad.ok, false)
   assert.equal(bad.verdict, null, 'a failed tick never shows a recommendation')
-  assert.equal(bad.ticks.find((x) => x.id === 'evidence:run-binding')?.ok, false)
+  assert.equal(bad.ticks.find((x) => x.id === 'evidence:binding')?.ok, false)
   assert.equal(checkPicture({ phase: 'opened', view: { ok: true, ticks: [], outputs: null } as unknown as BorrowerCheckView }).ok, false, 'no ticks is not a pass')
   const refused = checkPicture({ phase: 'refused', refusal: 'TIMEOUT' })
   assert.equal(refused.refusal, 'TIMEOUT')
   assert.equal(refused.ok, null)
-  assert.match(phaseWords('approval', 'check node 9d1375'), /^Check node 9d1375 asks you to approve its Compex contract$/)
+  assert.match(phaseWords('approval', 'check node 9d1375'), /^Check node 9d1375 asks you to approve its scorer contract$/)
 })
 
 test('the page is stamped only with a real closing txid', () => {
